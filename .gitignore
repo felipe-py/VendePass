@@ -1,10 +1,2 @@
 # Ignore virtual environments
 venv/
-
-# Ignore bytecode compilado
-__pycache__/
-*.pyc
-*.pyo
-
-# Ignore configurações do Visual Studio Code
-.vscode/
