@@ -1,46 +1,31 @@
 import json
-arquivo = "src/dados/usuarios.json"
+arquivo_usuarios = "src/dados/usuarios.json"
+arquivo_viagens = "src/dados/viagens.json"
 
 class Usuario:
     def __init__(self, id, senha, viagens):
         self.id = id
         self.senha = senha
-        self.viagens = viagens
-        
-    def exibir_info(self):
-        # Método para exibir informações do usuário
-        print(f"ID: {self.id}")
+            
+    def __str__(self):
+        return f"Usuário(id={self.id})"
         
     def login(self, id, senha):
         # Método para validar a senha
         if self.senha == senha and self.id == id:
             return True
-        
-    def adicionar_viagem(self, destino):
-        # Método para adicionar uma nova viagem à lista
-        self.viagens.append(destino)
-        print(f"Viagem para {destino} adicionada com sucesso.")
-    
-    def exibir_viagens(self):
-        # Método para exibir todas as viagens do usuário
-        if self.viagens:
-            print(f"Viagens feitas por {self.id}:")
-            for viagem in self.viagens:
-                print(f"- {viagem}")
-        else:
-            print(f"{self.id} ainda não fez nenhuma viagem.")
             
     # Método para converter o objeto Usuario em um dicionário
     def to_dict(self):
         return {
-            "ID": self.id,
-            "senha": self.senha,  # Armazenando a senha como parte do dicionário
+            "id": self.id,
+            "senha": self.senha,
         }
 
     # Método estático para criar um objeto Usuario a partir de um dicionário
     @staticmethod
     def from_dict(data):
-        usuario = Usuario(data["id"], data["senha"], data["senha"])
+        usuario = Usuario(data["id"], data["senha"])
         return usuario
     
     # Função para salvar uma lista de usuários em um arquivo JSON
@@ -48,7 +33,7 @@ class Usuario:
     def salvar_usuario(usuario):
         try:
             # Carregar os usuários existentes
-            with open(arquivo, 'r') as f:
+            with open(arquivo_usuarios, 'r') as f:
                 # Verificar se o arquivo está vazio
                 content = f.read().strip()
                 if content:
@@ -63,18 +48,24 @@ class Usuario:
         usuarios_existentes.append(usuario.to_dict())
 
         # Salvar todos os usuários de volta no arquivo
-        with open(arquivo, 'w') as f:
+        with open(arquivo_usuarios, 'w') as f:
             json.dump(usuarios_existentes, f, indent=4)
 
-        print(f"Usuário salvo em {arquivo}.")
+        print(f"Usuário salvo em {arquivo_usuarios}.")
 
     # Função para carregar usuários de um arquivo JSON
-    def carregar_usuarios(arquivo):
+    @staticmethod
+    def carregar_usuarios():
         try:
-            with open(arquivo, 'r') as f:
+            with open(arquivo_usuarios, 'r') as f:
                 dados = json.load(f)
                 return [Usuario.from_dict(usuario) for usuario in dados]
         except FileNotFoundError:
-            print(f"Arquivo {arquivo} não encontrado.")
+            print(f"Arquivo {arquivo_usuarios} não encontrado.")
             return []
+    
+    '''def verificar_id(usuario):
+        dic = usuario.carregar_usuarios
+        for chave in dic:
+            if chave.'''
         

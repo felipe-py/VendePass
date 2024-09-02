@@ -3,5 +3,5 @@ from Usuario import Usuario
 def cadastrar_usuario(usuario):
     Usuario.salvar_usuario(usuario)
     
-usuario1 = Usuario(8,88,"Salvador->Fortaleza")
+usuario1 = Usuario(9,99, "Salvador->Fortaleza")
 cadastrar_usuario(usuario1)
