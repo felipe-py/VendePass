@@ -3,7 +3,7 @@ arquivo_usuarios = "src/dados/usuarios.json"
 arquivo_viagens = "src/dados/viagens.json"
 
 class Usuario:
-    def __init__(self, id, senha, viagens):
+    def __init__(self, id, senha):
         self.id = id
         self.senha = senha
             
@@ -41,9 +41,9 @@ class Usuario:
                 else:
                     usuarios_existentes = []
         except FileNotFoundError:
-            # Se o arquivo não existir, começamos com uma lista vazia
+        # Se o arquivo não existir, começamos com uma lista vazia
             usuarios_existentes = []
-
+        
         # Adicionar o novo usuário
         usuarios_existentes.append(usuario.to_dict())
 
@@ -64,8 +64,4 @@ class Usuario:
             print(f"Arquivo {arquivo_usuarios} não encontrado.")
             return []
     
-    '''def verificar_id(usuario):
-        dic = usuario.carregar_usuarios
-        for chave in dic:
-            if chave.'''
         
