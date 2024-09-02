@@ -1,20 +1,22 @@
 import socket
 import struct
 
-# Criação do socket
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def cliente():
 
-# Conexão ao servidor
-client_socket.connect(('127.0.0.1', 65432))
+    # Criação do socket
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Enviando informação dada pelo usuário ao servidor
+    # Conexão ao servidor
+    client_socket.connect(('127.0.0.1', 65432))
 
-numero = int(input("Digite um número inteiro:\n"))
-client_socket.sendall(str(numero).encode('utf-8'))
-#client_socket.sendall(struct.pack('!I', numero))   MAIS EFICIENTE
+    # Enviando informação dada pelo usuário ao servidor
 
-# Recebendo resposta do servidor
-data = client_socket.recv(1024)
-print(f"Recebido do servidor: {data.decode()}")
+    numero = int(input("Digite um número inteiro:\n"))
+    client_socket.sendall(str(numero).encode('utf-8'))
+    #client_socket.sendall(struct.pack('!I', numero))   MAIS EFICIENTE
 
-client_socket.close()
+    # Recebendo resposta do servidor
+    data = client_socket.recv(1024)
+    print(f"Recebido do servidor: {data.decode()}")
+
+    client_socket.close()

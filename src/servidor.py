@@ -1,29 +1,31 @@
 import socket
 import struct
 
-# Criação do socket
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def servidor():
 
-# Vinculando o socket ao endereço e porta
-server_socket.bind(('127.0.0.1', 65432))  # IP local e porta
+    # Criação do socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Colocando o socket em modo de escuta, pronto para aceitar conexões
-server_socket.listen()
+    # Vinculando o socket ao endereço e porta
+    server_socket.bind(('127.0.0.1', 65432))  # IP local e porta
 
-print("Servidor escutando...")
+    # Colocando o socket em modo de escuta, pronto para aceitar conexões
+    server_socket.listen()
 
-# Aceitando conexões de clientes
-conn, addr = server_socket.accept()
-print(f"Conectado com {addr}")
+    print("Servidor escutando...")
 
-# Recebendo dados
-data = conn.recv(1024)
-numero_recebido = int(data.decode('utf-8'))
+    # Aceitando conexões de clientes
+    conn, addr = server_socket.accept()
+    print(f"Conectado com {addr}")
 
-# Respondendo ao cliente
+    # Recebendo dados
+    data = conn.recv(1024)
+    numero_recebido = int(data.decode('utf-8'))
 
-conn.sendall(str(numero_recebido).encode('utf-8'))
-#conn.sendall(struct.pack('!I', numero_recebido))    MAIS EFICIENTE
+    # Respondendo ao cliente
 
-# Fechando a conexão
-conn.close()
+    conn.sendall(str(numero_recebido).encode('utf-8'))
+    #conn.sendall(struct.pack('!I', numero_recebido))    MAIS EFICIENTE
+
+    # Fechando a conexão
+    conn.close()
