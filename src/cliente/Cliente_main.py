@@ -1,6 +1,5 @@
 import json
 arquivo_usuarios = "src/dados/usuarios.json"
-arquivo_viagens = "src/dados/viagens.json"
 
 class Usuario:
     def __init__(self, id, senha):
