@@ -1,4 +1,4 @@
-from Usuario import Usuario
+from cliente.Cliente_main import Usuario
 
 def verificar_repeticao_id(usuario):
     usuarios_cadastrados = Usuario.carregar_usuarios()
@@ -12,6 +12,3 @@ def cadastrar_usuario(usuario):
             Usuario.salvar_usuario(usuario)
         else:
             print("Usuario previamente cadastrado")
-    
-usuario1 = Usuario(3,11)
-cadastrar_usuario(usuario1)
