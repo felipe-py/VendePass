@@ -1,4 +1,5 @@
 import socket
+import struct
 
 def main():
     # Configurações do cliente
@@ -12,15 +13,16 @@ def main():
     try:
         while True:
             # Envia uma mensagem ao servidor
-            mensagem = input("Digite uma mensagem para enviar ao servidor: ")
-            cliente.sendall(mensagem.encode('utf-8'))
+            numero = int(input("Digite um número inteiro:\n"))  
+            cliente.sendall(struct.pack('!I', numero))  # Empacota como inteiro de 4 bytes (big-endian)
 
             # Recebe e exibe a resposta do servidor
-            resposta = cliente.recv(1024)
-            print(f"Resposta do servidor: {resposta.decode('utf-8')}")
-
+            data = cliente.recv(1024)
+            numero_recebido = struct.unpack('!I', data)[0]  # Desempacota o inteiro
+            print(f"Recebido do servidor: {numero_recebido}")
+            
             # Permite ao cliente sair
-            if mensagem.lower() == 'sair':
+            if numero == 4:
                 print("Encerrando a conexão...")
                 break
     finally:
