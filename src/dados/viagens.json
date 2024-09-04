@@ -1,11 +1,14 @@
-[
-    {
-        "1": "Salvador -> Recife"
+{
+    "1": {
+        "trecho": "Salvador -> Recife",
+        "assentos_disponiveis": 2
     },
-    {
-        "2": "Recife -> Fortaleza"
+    "2": {
+        "trecho": "Recife -> Fortaleza",
+        "assentos_disponiveis": 2
     },
-    {
-        "3": "Fortaleza -> Natal"
+    "3": {
+        "trecho": "Fortaleza -> Natal",
+        "assentos_disponiveis": 2
     }
-]
+}
