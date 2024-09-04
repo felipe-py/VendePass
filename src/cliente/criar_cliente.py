@@ -1,5 +1,5 @@
-from cliente.Cliente_main import Usuario
-from cliente.utils_cliente import cadastrar_usuario
+from Cliente_main import Cliente
+from utils_cliente import cadastrar_cliente
     
-usuario1 = Usuario(3,11)
-cadastrar_usuario(usuario1)
+usuario1 = Cliente(4,88)
+cadastrar_cliente(usuario1)
