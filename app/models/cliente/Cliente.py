@@ -1,5 +1,5 @@
 import json
-arquivo_clientes = "src/dados/clientes.json"
+arquivo_clientes = "app/dados/clientes.json"
 
 class Cliente:
     def __init__(self, id, senha):
@@ -8,10 +8,6 @@ class Cliente:
             
     def __str__(self):
         return f"Usuário(id={self.id})"
-        
-    def login(self, id, senha):
-        if self.senha == senha and self.id == id:
-            return True
             
     # Método para converter o objeto cliente em um dicionário
     def to_dict(self):
@@ -61,5 +57,12 @@ class Cliente:
         except FileNotFoundError:
             print(f"Arquivo {arquivo_clientes} não encontrado.")
             return []
+        
+    @staticmethod
+    def login(id, senha, clientes):
+        for cliente in clientes:
+            if cliente.id == id and cliente.senha == senha:
+                return True
+        return False
     
         
