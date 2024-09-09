@@ -10,5 +10,49 @@
     "3": {
         "trecho": "Fortaleza -> Natal",
         "assentos_disponiveis": 2
+    },
+    "4": {
+        "trecho": "Natal -> Teresina",
+        "assentos_disponiveis": 2
+    },
+    "5": {
+        "trecho": "Teresina -> Palmas",
+        "assentos_disponiveis": 2
+    },
+    "6": {
+        "trecho": "Palmas -> Goi\u00e2nia",
+        "assentos_disponiveis": 2
+    },
+    "7": {
+        "trecho": "Goi\u00e2nia -> Campo Grande",
+        "assentos_disponiveis": 2
+    },
+    "8": {
+        "trecho": "Campo Grande -> S\u00e3o Paulo",
+        "assentos_disponiveis": 2
+    },
+    "9": {
+        "trecho": "S\u00e3o Paulo -> Rio de Janeiro",
+        "assentos_disponiveis": 2
+    },
+    "5": {
+        "trecho": "Teresina -> Palmas",
+        "assentos_disponiveis": 2
+    },
+    "6": {
+        "trecho": "Palmas -> Goi\u00e2nia",
+        "assentos_disponiveis": 2
+    },
+    "7": {
+        "trecho": "Goi\u00e2nia -> Campo Grande",
+        "assentos_disponiveis": 2
+    },
+    "8": {
+        "trecho": "Campo Grande -> S\u00e3o Paulo",
+        "assentos_disponiveis": 2
+    },
+    "9": {
+        "trecho": "S\u00e3o Paulo -> Rio de Janeiro",
+        "assentos_disponiveis": 2
     }
 }
