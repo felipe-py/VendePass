@@ -6,6 +6,16 @@ class GerenciadorViagens:
     def __init__(self):
         self.trechos = self.ler_json()
 
+    def __str__(self):
+        if not self.trechos:
+            return "Nenhum trecho disponível."
+
+        resultado = "Trechos disponíveis:\n"
+        for key, rota in self.trechos.items():
+            resultado += f"Trecho: {key}, Destino: {rota.trecho}, Assentos Disponíveis: {rota.numeroAssentos}\n"
+        return resultado
+
+
     def ler_json(self):
         try:
             with open(arquivo_json, 'r') as arquivo:
@@ -43,6 +53,13 @@ class GerenciadorViagens:
     def remover_trecho(self, trecho_key):
         if trecho_key in self.trechos:
             del self.trechos[trecho_key]
+            self.escrever_json()
+        else:
+            print(f"Trecho {trecho_key} não encontrado.")
+    
+    def realizar_viagem(self, trecho_key):
+        if trecho_key in self.trechos:
+            self.trechos[trecho_key].finalizarRota()
             self.escrever_json()
         else:
             print(f"Trecho {trecho_key} não encontrado.")
