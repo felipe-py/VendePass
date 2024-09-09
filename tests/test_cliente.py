@@ -21,7 +21,7 @@ class TestCliente(unittest.TestCase):
     def test_login_falha_senha_incorreta(self):
         # Testa o login com a senha incorreta
         clientes_registrados = Cliente.carregar_clientes()
-        self.assertTrue(Cliente.login(1,44,clientes_registrados))
+        self.assertFalse(Cliente.login(1,44,clientes_registrados))
 
 if __name__ == "__main__":
     unittest.main()
