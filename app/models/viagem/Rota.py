@@ -17,3 +17,6 @@ class Rota:
         self.numeroAssentos = self.ASSENTOS
         return
     
+    def __str__(self):
+        return f"Rota: {self.trecho}, Assentos Disponíveis: {self.numeroAssentos}"
+    
