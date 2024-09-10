@@ -1,11 +1,7 @@
-#from dataclasses import dataclass
-from datetime import date
-
 class Rota:
-    def __init__(self, cidadeSaida, cidadeChegada, data, numeroAssentos):
+    def __init__(self, cidadeSaida, cidadeChegada, numeroAssentos):
         self.cidadeSaida      = cidadeSaida
         self.cidadeChegada    = cidadeChegada
-        self.data             = data
         self.numeroAssentos   = numeroAssentos
         self.vendasPermitidas = 1              # Depois que a viagem ja aconteceu, ou se for cancelada, devemos impedir futuras operações
     
