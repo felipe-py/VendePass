@@ -59,7 +59,8 @@ class Cliente:
             return []
         
     @staticmethod
-    def login(id, senha, clientes):
+    def login(id, senha):
+        clientes = Cliente.carregar_clientes()
         for cliente in clientes:
             if cliente.id == id and cliente.senha == senha:
                 return True
