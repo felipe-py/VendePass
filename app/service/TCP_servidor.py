@@ -3,15 +3,6 @@ import threading
 import json
 import Rotas
 import Passagem
-import DateTime
-
-import socket
-import threading
-import json
-from Rotas import Rota
-from Passagem import Passagem
-from datetime import datetime
-
 
 def buscarObjeto(objeto, bancoDeDados):
     if objeto in bancoDeDados:
