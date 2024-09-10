@@ -1,6 +1,20 @@
 import socket
 import json
 
+def mostrarMenu():
+    # Printar as opcoes
+    # Pegar input do usuario
+        # enquanto o input for invalido
+        # pedir por um input valido
+    # Se opcao selecionada for ...
+        # invocar a funcao especifica
+
+def juntarInformacoes():
+
+def pedirPassagem():
+
+def pedirRota():
+
 def logar():  # Vai receber as credenciais e retornar um "mini dicionacio" com as informações
     login = input("digite seu login: ")
     senha = input("digite sua senha: ")
@@ -37,8 +51,12 @@ while status != "SAIR":
     tcp.sendall(json.dumps(credenciais).encode('utf-8'))
 
     confirmacao = tcp.recv(1024).decode('utf-8')
-
     print(confirmacao)
+
+    procedimento = input("Qual a opcao selecionada?\n")
+    tcp.sendall(procedimento.encode('utf-8'))
+
+
     
     status = input("Gostaria de SAIR?\n")
 tcp.close() # finalizando a conexao
