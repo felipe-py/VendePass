@@ -2,14 +2,52 @@ import socket
 import json
 
 def mostrarMenu():
-    # Printar as opcoes
-    # Pegar input do usuario
-        # enquanto o input for invalido
-        # pedir por um input valido
-    # Se opcao selecionada for ...
-        # invocar a funcao especifica
+    opcao = 1
+    while (opcao != 5):
+        print("O que deseja fazer?\n\n")
 
+        print("1. Comprar uma passagem\n")
+        print("2. Reservar uma passagem\n")
+        print("3. Pagar uma reserva\n")
+        print("4. Cancelar uma compra\n")
+        print("5. Sair\n\n")
+        
+        opcao = input("")
+
+        while (opcao not in range(1, 6)):
+            opcao = input("Por favor selecione uma opcao valida: ")
+        if (opcao == 1):
+            # perguntar o local de partida + 'if' de nao achado
+            # perguntar o local de chegada + 'if' de nao achado
+            # juntarInformacoes
+            # mandar a solicitacao para o servidor
+            # pegar a resposta do servidor
+        if (opcao == 2):
+            # perguntar o local de partida + 'if' de nao achado
+            # perguntar o local de chegada + 'if' de nao achado
+            # juntarInformacoes
+            # mandar a solicitacao para o servidor
+            # pegar a resposta do servidor
+        if (opcao == 3):
+            # mostrar uma lista de passagens associadas ao usuario
+            # pedir o 'ID' da passagem selecionada
+            # juntarInformacoes
+            # enviar a solicitacao para o servidor
+            # pegar a resposta do servidor
+        if (opcao == 4):
+            # mostrar uma lista de passagens associadas ao usuario
+            # pedir o 'ID' da passagem selecionada
+            # juntarInformacoes
+            # enviar a solicitacao para o servidor
+            # pegar a resposta do servidor
+        break
+        
+
+
+# Essa funcao deve juntar as informacoes para enviar para o servidor (juntar como uma tupla
+# ou como um dicionario, etc...)
 def juntarInformacoes():
+
 
 def pedirPassagem():
 

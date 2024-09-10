@@ -7,14 +7,14 @@ class Passagem:
         self.estaPago      = estaPago
         self.estaCancelado = estaCancelado
     
-    def realizarPagamento():
+    def realizarPagamento(self):
         self.estaPago = True
         return
 
-    def realizarCancelamento():
+    def realizarCancelamento(self):
         self.estaCancelado = True
         return
 
-    def desfazerCancelamento():
+    def desfazerCancelamento(self):
         self.estaCancelado = False
         return
