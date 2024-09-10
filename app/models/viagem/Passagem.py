@@ -1,25 +1,20 @@
-#from dataclasses import dataclass
-from DateTime import date
 
 class Passagem:
-    def __init__(self, dataCompra, reserva, cidadeSaida, cidadeChegada, poltrona, estaPago, estaCancelado):
-        self.dataCompra    = dataCompra
+    def __init__(self, reserva, cidadeSaida, cidadeChegada, estaPago, estaCancelado):
         self.reserva       = reserva
         self.cidadeSaida   = cidadeSaida
         self.cidadeChegada = cidadeChegada
-        self.poltrona      = poltrona  # Retirar depois
         self.estaPago      = estaPago
         self.estaCancelado = estaCancelado
     
-    def realizarCompra(self):
-        
+    def realizarPagamento():
+        self.estaPago = True
         return
-    def realizarReserva(self):
-        
+
+    def realizarCancelamento():
+        self.estaCancelado = True
         return
-    def realizarPagamento(self):
-        
-        return
-    def realizarCancelamento(self):
-        
+
+    def desfazerCancelamento():
+        self.estaCancelado = False
         return
