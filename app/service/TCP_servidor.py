@@ -86,10 +86,6 @@ def cancelarCompra(passagem, rota, bancoDePassagens, bancoDeRotas):
     
     return True
 
-# Funcao nao usada
-def carregarUsuarios():
-    with open('usuarios.json', 'r') as f:
-        return json.load(f)
 
 # Funcao para autenticar o login do usuario
 def verificarLogin(usuario, bancoDeUsuarios):
