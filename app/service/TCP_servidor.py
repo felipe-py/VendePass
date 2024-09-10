@@ -4,15 +4,20 @@ import json
 import Rotas
 import Passagem
 
+# Essa funcao busca um objeto num banco de dados, e em caso de match ele retorna o proprio objeto,
+# talvez seja melhor substituir por um retorno na forma de booleana
 def buscarObjeto(objeto, bancoDeDados):
     if objeto in bancoDeDados:
         return bancoDeDados[objeto]
     return None
 
+# Essa funcao carrega um banco de dados para ser usado no servico, serve para qualquer banco, mas
+# falta editar o caminho, essa funcao ta supondo que o banco de dados esteja no mesmo diretorio
 def carregarBancoDeDados(bancoDeDados):
     with open(bancoDeDados, 'r') as banco:
         return json.load(banco)
 
+# Funcao para comprar passagem, falta ajustar os atributos (por exemplo nao usa mais o datetime)
 def comprarPassagem(usuario, rota, bancoDeUsuarios, bancoDeRotas, bancoDePassagens):
     if not buscarObjeto(usuario, bancoDeUsuarios):
         return None
@@ -31,6 +36,7 @@ def comprarPassagem(usuario, rota, bancoDeUsuarios, bancoDeRotas, bancoDePassage
         json.dump(bancoDePassagens, passagens)
     return novaPassagem
 
+# Funcao para reservar passagem (Na pratica eh uma compra com a booleana estaPago como false)
 def reservarPassagem(usuario, rota, bancoDeUsuarios, bancoDeRotas, bancoDePassagens):
     if not buscarObjeto(usuario, bancoDeUsuarios):
         return None
@@ -49,6 +55,7 @@ def reservarPassagem(usuario, rota, bancoDeUsuarios, bancoDeRotas, bancoDePassag
         json.dump(bancoDePassagens, passagens)
     return novaPassagem
 
+# Funcao para pagar uma reserva 
 def pagarReserva(passagem, bancoDePassagens):
     if not buscarObjeto(passagem, bancoDePassagens):
         return False
@@ -61,6 +68,7 @@ def pagarReserva(passagem, bancoDePassagens):
     
     return True
 
+# Funcao para cancelar a compra de uma passagem
 def cancelarCompra(passagem, rota, bancoDePassagens, bancoDeRotas):
     if not buscarObjeto(passagem, bancoDePassagens):
         return False
@@ -78,10 +86,12 @@ def cancelarCompra(passagem, rota, bancoDePassagens, bancoDeRotas):
     
     return True
 
+# Funcao nao usada
 def carregarUsuarios():
     with open('usuarios.json', 'r') as f:
         return json.load(f)
 
+# Funcao para autenticar o login do usuario
 def verificarLogin(usuario, bancoDeUsuarios):
     login = usuario.get('login')
     senha = usuario.get('senha')
@@ -93,6 +103,7 @@ def verificarLogin(usuario, bancoDeUsuarios):
         print('Login falhou')
     return False
 
+# Funcao que inicia o processo para lidar com um novo usuario, no momento recebe apenas o login e a senha e realiza a autenticacao
 def novoCliente(conn, addr, bancoDeUsuarios, bancoDeRotas, bancoDePassagens):
     print(f'Nova conexão com {addr}')
     
