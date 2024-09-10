@@ -27,8 +27,8 @@ def comprarPassagem(usuario, rota, bancoDeUsuarios, bancoDeRotas, bancoDePassage
         return None
 
     bancoDeRotas[rota]['numeroAssentos'] -= 1
-    novaPassagem = Passagem(datetime.now(), reserva=False, cidadeSaida=bancoDeRotas[rota]['cidadeSaida'],
-                            cidadeChegada=bancoDeRotas[rota]['cidadeChegada'], poltrona=0, estaPago=True, estaCancelado=False)
+    novaPassagem = Passagem(reserva=False, cidadeSaida=bancoDeRotas[rota]['cidadeSaida'],
+                            cidadeChegada=bancoDeRotas[rota]['cidadeChegada'], estaPago=True, estaCancelado=False)
     
     bancoDePassagens[usuario] = novaPassagem.__dict__  # Adicionar ao banco de passagens
     
@@ -46,8 +46,8 @@ def reservarPassagem(usuario, rota, bancoDeUsuarios, bancoDeRotas, bancoDePassag
         return None
 
     bancoDeRotas[rota]['numeroAssentos'] -= 1
-    novaPassagem = Passagem(datetime.now(), reserva=True, cidadeSaida=bancoDeRotas[rota]['cidadeSaida'],
-                            cidadeChegada=bancoDeRotas[rota]['cidadeChegada'], poltrona=0, estaPago=False, estaCancelado=False)
+    novaPassagem = Passagem(reserva=True, cidadeSaida=bancoDeRotas[rota]['cidadeSaida'],
+                            cidadeChegada=bancoDeRotas[rota]['cidadeChegada'], estaPago=False, estaCancelado=False)
     
     bancoDePassagens[usuario] = novaPassagem.__dict__  # Adicionar ao banco de passagens
     
