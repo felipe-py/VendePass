@@ -1,6 +1,91 @@
 import socket
 import threading
 import json
+import Rotas
+import Passagem
+import DateTime
+
+import socket
+import threading
+import json
+from Rotas import Rota
+from Passagem import Passagem
+from datetime import datetime
+
+
+def buscarObjeto(objeto, bancoDeDados):
+    if objeto in bancoDeDados:
+        return bancoDeDados[objeto]
+    return None
+
+def carregarBancoDeDados(bancoDeDados):
+    with open(bancoDeDados, 'r') as banco:
+        return json.load(banco)
+
+def comprarPassagem(usuario, rota, bancoDeUsuarios, bancoDeRotas, bancoDePassagens):
+    if not buscarObjeto(usuario, bancoDeUsuarios):
+        return None
+    if not buscarObjeto(rota, bancoDeRotas):
+        return None
+    if bancoDeRotas[rota]['numeroAssentos'] < 1:
+        return None
+
+    bancoDeRotas[rota]['numeroAssentos'] -= 1
+    novaPassagem = Passagem(datetime.now(), reserva=False, cidadeSaida=bancoDeRotas[rota]['cidadeSaida'],
+                            cidadeChegada=bancoDeRotas[rota]['cidadeChegada'], poltrona=0, estaPago=True, estaCancelado=False)
+    
+    bancoDePassagens[usuario] = novaPassagem.__dict__  # Adicionar ao banco de passagens
+    
+    with open('passagens.json', 'w') as passagens:
+        json.dump(bancoDePassagens, passagens)
+    return novaPassagem
+
+def reservarPassagem(usuario, rota, bancoDeUsuarios, bancoDeRotas, bancoDePassagens):
+    if not buscarObjeto(usuario, bancoDeUsuarios):
+        return None
+    if not buscarObjeto(rota, bancoDeRotas):
+        return None
+    if bancoDeRotas[rota]['numeroAssentos'] < 1:
+        return None
+
+    bancoDeRotas[rota]['numeroAssentos'] -= 1
+    novaPassagem = Passagem(datetime.now(), reserva=True, cidadeSaida=bancoDeRotas[rota]['cidadeSaida'],
+                            cidadeChegada=bancoDeRotas[rota]['cidadeChegada'], poltrona=0, estaPago=False, estaCancelado=False)
+    
+    bancoDePassagens[usuario] = novaPassagem.__dict__  # Adicionar ao banco de passagens
+    
+    with open('passagens.json', 'w') as passagens:
+        json.dump(bancoDePassagens, passagens)
+    return novaPassagem
+
+def pagarReserva(passagem, bancoDePassagens):
+    if not buscarObjeto(passagem, bancoDePassagens):
+        return False
+    if bancoDePassagens[passagem]['estaPago']:
+        return False
+    bancoDePassagens[passagem]['estaPago'] = True
+    
+    with open('passagens.json', 'w') as passagens:
+        json.dump(bancoDePassagens, passagens)
+    
+    return True
+
+def cancelarCompra(passagem, rota, bancoDePassagens, bancoDeRotas):
+    if not buscarObjeto(passagem, bancoDePassagens):
+        return False
+    if bancoDePassagens[passagem]['estaCancelado']:
+        return False
+    
+    bancoDePassagens[passagem]['estaCancelado'] = True
+    bancoDeRotas[rota]['numeroAssentos'] += 1
+    
+    with open('passagens.json', 'w') as passagens:
+        json.dump(bancoDePassagens, passagens)
+    
+    with open('rotas.json', 'w') as rotas:
+        json.dump(bancoDeRotas, rotas)
+    
+    return True
 
 def carregarUsuarios():
     with open('usuarios.json', 'r') as f:
@@ -10,15 +95,14 @@ def verificarLogin(usuario, bancoDeUsuarios):
     login = usuario.get('login')
     senha = usuario.get('senha')
 
-    if (login in bancoDeUsuarios) and (bancoDeUsuarios[login] == senha):
+    if login in bancoDeUsuarios and bancoDeUsuarios[login] == senha:
         print('Logado com Sucesso')
         return True
     else:
         print('Login falhou')
-
     return False
 
-def novoCliente(conn, addr, bancoDeUsuarios):
+def novoCliente(conn, addr, bancoDeUsuarios, bancoDeRotas, bancoDePassagens):
     print(f'Nova conexão com {addr}')
     
     try:
@@ -32,29 +116,12 @@ def novoCliente(conn, addr, bancoDeUsuarios):
                 estaLogado = verificarLogin(credenciais, bancoDeUsuarios)
             
             if estaLogado:
-                #Aplicar aqui os algoritmos para fazer o funcionamento do serviço
-                print("\nresto das operações\n")
                 conn.sendall("Logado com sucesso".encode('utf-8'))
+                # Aqui você chama as funções para comprar, reservar, etc.
             else:
                 conn.sendall("Falha no login".encode('utf-8'))
     finally:
-        conn.close()             
-
-# NÃO USADA
-def conectar_com_cliente(con, cliente):                     # Função para se comunicar com o cliente para troca de mensagens
-    print("Conectado com ", cliente)                        # Ta aqui so pra dar o feedback que a conexao aconteceu
-    while True:
-        try:
-            mensagem = con.recv(1024).decode()              # Recebe e decodifica a mensagem do cliente
-            if not mensagem:                                # Se a mensagem for uma string vazia
-                break                                       # Sai do loop, sem mensagem sem conexao
-            print(f"Cliente {cliente} enviou: \n{mensagem}") # printa a mensagem que recebeu do cliente
-        except ConnectionResetError:                        # ta aqui so por desencargo de consciencia mesmo caso alguma coisa aconteca
-            print(f"Cliente {cliente} desconectou inesperadamente.")
-            break
-
-    print(f"Conexão encerrada com {cliente}.")  # depois de receber a mensagem encerramos a conexao para evitar sobrecarregar o limite do tcp.listen()
-    con.close()                                 # Fecha a conexão com o cliente
+        conn.close()
 
 HOST = ''        # só declarando o host que vai ser usado na tupla "origem" 
 PORT = 8000      # Porta que vai ser usada na conexao
@@ -78,3 +145,4 @@ while True:
     print(f'Número de conexões ativas: {threading.active_count() - 1}')         # Mostra o número de threads ativas
 
 print("FIM")  # Esse print nao acontece na pratica, pois nao tem um break no while, mas caso no futuro apliquemos algo depois do fim da execucao.
+
