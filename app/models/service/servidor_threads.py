@@ -2,7 +2,8 @@ import socket
 import threading
 import struct
 
-from Cliente import Cliente
+from app.models.cliente.Cliente import Cliente
+
 
 def espacos():
     print("=-=-=-=-=-=-=-=-=-=-=-=-==-=-\n")

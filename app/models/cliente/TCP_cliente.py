@@ -1,6 +1,17 @@
 import socket
 import json
 
+# Essa funcao deve juntar as informacoes para enviar para o servidor (juntar como uma tupla
+# ou como um dicionario, etc...)
+def juntarInformacoes():
+    pass
+
+def pedirPassagem():
+    pass
+
+def pedirRota():
+    pass
+
 def logar():  # Vai receber as credenciais e retornar um "mini dicionacio" com as informações
     login = input("digite seu login: ")
     senha = input("digite sua senha: ")
@@ -37,8 +48,10 @@ while status != "SAIR":
     tcp.sendall(json.dumps(credenciais).encode('utf-8'))
 
     confirmacao = tcp.recv(1024).decode('utf-8')
-
     print(confirmacao)
-    
+
+    procedimento = input("Qual a opcao selecionada?\n")
+    tcp.sendall(procedimento.encode('utf-8'))
+
     status = input("Gostaria de SAIR?\n")
 tcp.close() # finalizando a conexao

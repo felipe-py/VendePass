@@ -1,6 +1,7 @@
 import unittest
 
-from app.models.cliente.Cliente import Cliente
+from models.cliente.Cliente import Cliente
+
 class TestCliente(unittest.TestCase):
 
     def setUp(self):
