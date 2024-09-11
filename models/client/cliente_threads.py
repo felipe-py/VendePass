@@ -1,7 +1,9 @@
 import socket
 import struct
 
-def login(cliente_socket):
+from models.service.servidor_threads import ativo
+
+def envia_requisicao_login(cliente_socket):
     # Solicita credenciais do usuário
     identificador = input("Identificador: ")
     senha = input("Senha: ")
@@ -19,7 +21,7 @@ def login(cliente_socket):
         print("Login falhou!")
         return False
 
-def main():
+def mainCliente():
     # Configurações do cliente
     IP_SERVIDOR = '127.0.0.1'  # IP do servidor
     PORTA_SERVIDOR = 5000       # Porta do servidor
@@ -30,7 +32,7 @@ def main():
 
     try:
         # Realiza o login
-        if not login(cliente):
+        if not envia_requisicao_login(cliente):
             cliente.close()
             return
 
@@ -61,5 +63,5 @@ def main():
     finally:
         cliente.close()  # Fecha a conexão
 
-if __name__ == "__main__":
-    main()
+if ativo():
+    mainCliente()

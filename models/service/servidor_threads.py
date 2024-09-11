@@ -2,11 +2,13 @@ import socket
 import threading
 import struct
 
-from app.models.cliente.Cliente import Cliente
-
+from models.client import Cliente
 
 def espacos():
     print("=-=-=-=-=-=-=-=-=-=-=-=-==-=-\n")
+    
+def ativo():
+    return True
 
 def tratar_cliente(conexao, endereco):
     print(f"Conexão estabelecida com {endereco}")
@@ -49,6 +51,7 @@ def main():
     servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     servidor.bind((IP_SERVIDOR, PORTA_SERVIDOR))
     servidor.listen()
+    ativo()
 
     print(f"Servidor escutando no IP {IP_SERVIDOR} e porta {PORTA_SERVIDOR}")
 
@@ -58,8 +61,4 @@ def main():
 
         cliente_thread = threading.Thread(target=tratar_cliente, args=(conexao, endereco))
         cliente_thread.start()
-
-if __name__ == "__main__":
-    main()
-    
     

@@ -1,5 +1,5 @@
 import json
-arquivo_clientes = "app/dados/clientes.json"
+arquivo_clientes = "dados/clientes.json"
 
 class Cliente:
     def __init__(self, id, senha):

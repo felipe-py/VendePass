@@ -1,6 +1,6 @@
 import json
 from models.viagem.Rota import Rota
-arquivo_json = "app/dados/rotas.json"
+arquivo_json = "dados/rotas.json"
 
 class GerenciadorViagens:
     def __init__(self):
@@ -14,7 +14,6 @@ class GerenciadorViagens:
         for key, rota in self.trechos.items():
             resultado += f"Trecho: {key}, Destino: {rota.trecho}, Assentos Disponíveis: {rota.numeroAssentos}\n"
         return resultado
-
 
     def ler_json(self):
         try:

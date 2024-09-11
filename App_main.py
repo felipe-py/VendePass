@@ -32,8 +32,7 @@ print(geren.trechos["2"])
 geren.realizar_viagem("2")
 print(geren.trechos["2"])'''
 
-from models.viagem.GerenciadorViagem import GerenciadorViagens
-
+'''from models.viagem.GerenciadorViagem import GerenciadorViagens
 
 def mostrarMenu():
     lista_opcoes = ["1","2","3","4"]
@@ -98,3 +97,8 @@ def mostrarMenu():
             # pegar a resposta do servidor
 
 mostrarMenu()
+'''
+
+from models.client.cliente_threads import mainCliente
+
+mainCliente()
