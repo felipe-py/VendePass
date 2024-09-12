@@ -1,0 +1,28 @@
+[
+    {
+        "trecho": "Salvador -> Recife",
+        "assentos_disponiveis": 2
+        "cidadeSaida":"Salvador"
+        "cidadeChegada":"Recife"
+    },
+    {
+        "trecho": "Recife -> Fortaleza",
+        "assentos_disponiveis": 2
+        "cidadeSaida":"Recife"
+        "cidadeChegada":"Fortaleza"
+
+    },
+    {
+        "trecho": "Fortaleza -> Natal",
+        "assentos_disponiveis": 2
+        "cidadeSaida":"Fortaleza"
+        "cidadeChegada":"Natal"
+
+    },
+    {
+        "trecho": "Natal -> Teresina",
+        "assentos_disponiveis": 2
+        "cidadeSaida":"Natal"
+        "cidadeChegada":"Teresina"
+    }
+]    

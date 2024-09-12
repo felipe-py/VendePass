@@ -3,6 +3,8 @@ import struct
 
 from models.service.servidor_threads import ativo
 
+from models.client.utils_cliente import comprar_passagem, reservar_passagem, pagar_reserva, cancelar_compra
+
 def envia_requisicao_login(cliente_socket):
     # Solicita credenciais do usuário
     identificador = input("Identificador: ")
@@ -38,30 +40,58 @@ def mainCliente():
 
         while True:
             # Solicita um número inteiro ao usuário
-            try:
-                numero = int(input("Digite um número inteiro:\n"))  
-            except ValueError:
-                print("Entrada inválida. Por favor, digite um número inteiro.")
-                continue
+            # try:
+            #     numero = int(input("Digite um número inteiro:\n"))
+            # except ValueError:
+            #     print("Entrada inválida. Por favor, digite um número inteiro.")
+            #     continue
+            #
+            # # Envia o número ao servidor
+            # cliente.sendall(struct.pack('!I', numero))  # Empacota como inteiro de 4 bytes (big-endian)
+            #
+            # # Recebe e exibe a resposta do servidor
+            # data = cliente.recv(1024)
+            # if not data:
+            #     print("Conexão perdida com o servidor.")
+            #     break
+            #
+            # numero_recebido = struct.unpack('!I', data)[0]  # Desempacota o inteiro
+            # print(f"Recebido do servidor: {numero_recebido}")
+            #
+            # # Permite ao cliente sair se o número for 4
+            # if numero == 4:
+            #     print("Encerrando a conexão...")
+            #     break
+            print("O que deseja fazer?\n\n")
+            print("1. Compra uma passagem\n")
+            print("2. Reservar uma passagem\n")
+            print("3. Pagar uma reserva\n")
+            print("4. Cancelar uma compra\n")
+            print("5. Sair\n")
 
-            # Envia o número ao servidor
-            cliente.sendall(struct.pack('!I', numero))  # Empacota como inteiro de 4 bytes (big-endian)
+            opcao = int(input("\n:"))
 
-            # Recebe e exibe a resposta do servidor
-            data = cliente.recv(1024)
-            if not data:
-                print("Conexão perdida com o servidor.")
+            while (opcao not in range(1,6)):
+                opcao = int(input("Por favor insira uma opcao valida.\n:"))
+            if (opcao == 1):
+                comprar_passagem()
+                return
+            if (opcao == 2):
+                reservar_passagem()
+                return
+            if (opcao == 3):
+                pagar_reserva()
+                return
+            if (opcao == 4):
+                cancelar_compra()
+                return
+            if (opcao == 5):
                 break
             
-            numero_recebido = struct.unpack('!I', data)[0]  # Desempacota o inteiro
-            print(f"Recebido do servidor: {numero_recebido}")
             
-            # Permite ao cliente sair se o número for 4
-            if numero == 4:
-                print("Encerrando a conexão...")
-                break
     finally:
         cliente.close()  # Fecha a conexão
 
 if ativo():
     mainCliente()
+
