@@ -3,6 +3,7 @@ import threading
 import struct
 import json
 import os #acabei precisando pra puxar o nome dos diretorios dos jsons
+import time #testando se o problema da conexao eh que a solicitacao vem antes de teerminar a liberacao
 
 from models.client import Cliente
 
@@ -52,34 +53,81 @@ def comprar_passagem(cidade_saida, cidade_chegada):
             return f"Passagem criada: {nova_passagem}"
     return f"Nao tem nenhum trecho entre essas cidades com assentos disponiveis"
 
-def tratar_cliente2(conexao, endereco):
-    print(f"Conexão estabelecida com {endereco}")
-    espacos()
+def tratar_cliente2():
+    # print(f"Conexão estabelecida com {endereco}")
+    # espacos()
+    # try:
+    #     login_data = conexao.recv(1024).decode()
+    #     identificador, senha = login_data.split(',')
+    #     if Cliente.login(identificador, senha):
+    #         conexao.sendall(b"Login bem-sucedido")
+    #         print(f"Cliente [ID:{identificador}] {endereco} fez login com sucesso")
+    #     else:
+    #         conexao.sendall(b"Login falhou")
+    #         conexao.close()
+    #         return
+    # except Exception as e:
+    #     print(f"Erro ao processar login: {e}")
+    #     conexao.close()
+    logado = logar()
+    if logado:
+        while True:
+            IP_SERVIDOR = '127.0.0.1'
+            PORTA_SERVIDOR = 5000
+
+            servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
+            servidor.bind((IP_SERVIDOR, PORTA_SERVIDOR))
+            servidor.listen()
+            ativo()
+
+            conexao_servidor, endereco = servidor.accept()
+            print(f"Nova conexão de {endereco}")
+            
+            mensagem = conexao_servidor.recv(1024).decode()
+            print(f"Até aqui ta funcionando. a mensagem que chegou foi {mensagem}\n")
+
+            operacao, cidade_saida, cidade_chegada = mensagem.split('|')
+
+            # Sim, so tem a compra por enquanto...
+            if (operacao == '1'):
+                resposta_servidor = comprar_passagem(cidade_saida, cidade_chegada)
+    
+    conexao_servidor.sendall(resposta_servidor.encode())
+    conexao_servidor.close()
+    servidor.close()
+    
+def logar():
+    IP_SERVIDOR = '127.0.0.1'
+    PORTA_SERVIDOR = 5000
+
+    servidor_login = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    servidor_login.bind((IP_SERVIDOR, PORTA_SERVIDOR))
+    servidor_login.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    servidor_login.listen()
+
+    conexao, endereco = servidor_login.accept()
+    print(f"Nova conexão de {endereco}")
+
+    logado = False
     try:
         login_data = conexao.recv(1024).decode()
         identificador, senha = login_data.split(',')
+        
         if Cliente.login(identificador, senha):
             conexao.sendall(b"Login bem-sucedido")
             print(f"Cliente [ID:{identificador}] {endereco} fez login com sucesso")
+            logado = True
         else:
             conexao.sendall(b"Login falhou")
-            conexao.close()
-            return
     except Exception as e:
         print(f"Erro ao processar login: {e}")
-        conexao.close()
-    while True:
-        mensagem = conexao.recv(1024).decode()
-        print(f"Até aqui ta funcionando. a mensagem que chegou foi {mensagem}\n")
-
-        operacao, cidade_saida, cidade_chegada = mensagem.split('|')
-
-        # Sim, so tem a compra por enquanto...
-        if (operacao == '1'):
-            resposta = comprar_passagem(cidade_saida, cidade_chegada)
-    
-    conexao.sendall(resposta.encode())
-    conexao.close()
+    finally:
+        conexao.close()  
+        servidor_login.close()  
+        print("Conexão de login encerrada.")
+        time.sleep(1)
+        return logado
 
 ############################################
 
@@ -124,23 +172,25 @@ def tratar_cliente(conexao, endereco):
     conexao.close()
 
 def main():
-    IP_SERVIDOR = '127.0.0.1'
-    PORTA_SERVIDOR = 5000
+    # IP_SERVIDOR = '127.0.0.1'
+    # PORTA_SERVIDOR = 5000
+    #
+    # servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # servidor.bind((IP_SERVIDOR, PORTA_SERVIDOR))
+    # servidor.listen()
+    # ativo()
 
-    servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    servidor.bind((IP_SERVIDOR, PORTA_SERVIDOR))
-    servidor.listen()
-    ativo()
+    # print(f"Servidor escutando no IP {IP_SERVIDOR} e porta {PORTA_SERVIDOR}")
 
-    print(f"Servidor escutando no IP {IP_SERVIDOR} e porta {PORTA_SERVIDOR}")
+    tratar_cliente2()
 
-    while True:
-        conexao, endereco = servidor.accept()
-        print(f"Nova conexão de {endereco}")
+    #while True:
+        #conexao, endereco = servidor.accept()
+        #print(f"Nova conexão de {endereco}")
 
         #cliente_thread = threading.Thread(target=tratar_cliente, args=(conexao, endereco))
-        cliente_thread = threading.Thread(target=tratar_cliente2, args=(conexao, endereco))
+        #cliente_thread = threading.Thread(target=tratar_cliente2)
 
-        cliente_thread.start()
-    
+        #cliente_thread.start()
+        
 
