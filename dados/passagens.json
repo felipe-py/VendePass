@@ -1,6 +1,10 @@
 [
-  {
-    "cidadeSaida":"Salvador"
-    "cidadeChegda":"Recife"
-  }
+    {
+        "cidadeSaida": "Salvador",
+        "cidadeChegda": "Recife"
+    },
+    {
+        "cidadeSaida": "Salvador",
+        "cidadeChegada": "Recife"
+    }
 ]

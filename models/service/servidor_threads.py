@@ -16,8 +16,13 @@ diretorio_dos_BD      = diretorio_do_servidor.parent.parent / 'dados'
 
 def carregar_rotas():
     diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas2.json')
-    with open(diretorio_das_rotas, 'r') as rotasBD:
-        return json.load(rotasBD)
+    try:
+        with open(diretorio_das_rotas, 'r') as rotasBD:
+            return json.load(rotasBD)
+    except FileNotFoundError:
+        print(f"Arquivo não encontrado: {diretorio_das_rotas}")
+    except json.JSONDecodeError as e:
+        print(f"Erro ao decodificar JSON: {e}")
 
 def carregar_passagens():
     diretorio_das_passagens = os.path.join(diretorio_dos_BD, 'passagens.json')
@@ -27,12 +32,12 @@ def carregar_passagens():
 def atualizar_rotas(rotas):
     diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas2.json')
     with open(diretorio_das_rotas, 'w') as rotasBD:
-        json.dump(rotas, rotasBD, ident=4) # O ident aqui eh so pra ficar bonitinho
+        json.dump(rotas, rotasBD, indent=4) # O indent aqui eh so pra ficar bonitinho
 
 def atualizar_passagens(passagens):
     diretorio_das_passagens = os.path.join(diretorio_dos_BD, 'passagens.json')
     with open(diretorio_das_passagens, 'w') as passagensBD:
-        json.dump(passagens, passagensBD, ident=4)
+        json.dump(passagens, passagensBD, indent=4)
 
 def comprar_passagem(cidade_saida, cidade_chegada):
     rotas = carregar_rotas()
