@@ -4,30 +4,33 @@ import struct
 import json
 import os #acabei precisando pra puxar o nome dos diretorios dos jsons
 import time #testando se o problema da conexao eh que a solicitacao vem antes de teerminar a liberacao
+from pathlib import Path
 
 from models.client import Cliente
 
 ############################################
-diretorio_do_servidor = os.path.dirname(__file__)
-diretorio_dos_BD      = os.path.join(diretorio_do_servidor, '..', '..', 'dados')
+# diretorio_do_servidor = os.path.dirname(__file__)
+# diretorio_dos_BD      = os.path.join(diretorio_do_servidor, '..', '..', '..', 'dados')
+diretorio_do_servidor = Path(__file__).parent
+diretorio_dos_BD      = diretorio_do_servidor.parent.parent / 'dados'
 
 def carregar_rotas():
-    diretorio_das_rotas = os.path.join(diretorio_do_servidor, 'rotas.json')
+    diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas2.json')
     with open(diretorio_das_rotas, 'r') as rotasBD:
         return json.load(rotasBD)
 
 def carregar_passagens():
-    diretorio_das_passagens = os.path.join(diretorio_do_servidor, 'passagens.json')
+    diretorio_das_passagens = os.path.join(diretorio_dos_BD, 'passagens.json')
     with open(diretorio_das_passagens, 'r') as passagensBD:
         return json.load(passagensBD)
 
 def atualizar_rotas(rotas):
-    diretorio_das_rotas = os.path.join(diretorio_do_servidor, 'rotas.json')
+    diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas2.json')
     with open(diretorio_das_rotas, 'w') as rotasBD:
         json.dump(rotas, rotasBD, ident=4) # O ident aqui eh so pra ficar bonitinho
 
 def atualizar_passagens(passagens):
-    diretorio_das_passagens = os.path.join(diretorio_do_servidor, 'passagens.json')
+    diretorio_das_passagens = os.path.join(diretorio_dos_BD, 'passagens.json')
     with open(diretorio_das_passagens, 'w') as passagensBD:
         json.dump(passagens, passagensBD, ident=4)
 
