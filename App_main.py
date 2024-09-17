@@ -26,7 +26,7 @@ def logout(s1):
     desconectar(s1)
 
 def login(s1):
-    print("Digite SAIR para sair.")
+    print("\nDigite SAIR para sair.\n")
     id = input("Digite seu ID: ")
     if id == "SAIR":
         desconectar(s1)
@@ -36,7 +36,8 @@ def login(s1):
         'senha':senha
     } 
     resposta = enviar_dados(s1, 1, credenciais)
-
+    print("\n")
+    espacos()
     if resposta == "Logado com sucesso":
         return id
     else:
@@ -45,7 +46,7 @@ def login(s1):
 
 def mostrar_rotas(s1):
     resposta = enviar_dados(s1, 2, {})
-    print(f"{resposta}")
+    # print(f"{resposta}")
     for rota in resposta:
         print(f"ID: {rota['ID']} | Trecho: {rota['trecho']}")
 
@@ -59,7 +60,8 @@ def comprar_passagem(s1, user):
     }
 
     resposta = enviar_dados(s1, 3, mensagem)
-    print(resposta)
+    print(f"{resposta}\n")
+    espacos()
 
 def mostrar_passagens(s1, user):
     mensagem = {'cliente_id': user}
@@ -74,15 +76,19 @@ def cancelar_compra(s1, user):
 
     mensagem = {'id_passagem': passagemID, 'userID': user}
     resposta = enviar_dados(s1, 5, mensagem)
-    print(resposta)
+    print(f"{resposta}\n")
+    espacos()
 
+def espacos():
+    print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 def menu(s1, user):
     while True:
         print("1. Comprar uma passagem")
         print("2. Cancelar uma compra")
         print("3. Sair")
 
-        operacao = input(": ")
+        operacao = input("\n: ")
+        espacos()
 
         if operacao == '1':
             comprar_passagem(s1, user)
@@ -92,7 +98,7 @@ def menu(s1, user):
             logout(s1)
             break
         else:
-            print("Por favor, selecione uma opção válida.")
+            print("\nPor favor, selecione uma opção válida.")
 
 def main():
     s1 = conectar()
@@ -103,5 +109,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
