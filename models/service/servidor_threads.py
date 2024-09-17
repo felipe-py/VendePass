@@ -10,11 +10,11 @@ from models.client import Cliente
 mutex_compra = threading.Lock()
 mutex_cancelamento = threading.Lock()
 
-#definição de diretórios para facilitar outras funções.
+#Definição de diretórios para facilitar outras funções.
 diretorio_do_servidor = Path(__file__).parent
 diretorio_dos_BD = diretorio_do_servidor.parent.parent / 'dados'
 
-
+#função para carregar dados de forma genérica, foi substituida por específicas, mas deixei pois pode vir a ser útil.
 def carregar_dados(arquivo):
     try:
         with open(arquivo, 'r') as f:
