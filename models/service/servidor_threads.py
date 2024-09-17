@@ -6,9 +6,11 @@ import os
 from pathlib import Path
 from models.client import Cliente
 
+#Criados os 2 MUTEX que irão controlar as operações de compra e cancelamento.
 mutex_compra = threading.Lock()
 mutex_cancelamento = threading.Lock()
 
+#definição de diretórios para facilitar outras funções.
 diretorio_do_servidor = Path(__file__).parent
 diretorio_dos_BD = diretorio_do_servidor.parent.parent / 'dados'
 
