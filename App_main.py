@@ -1,104 +1,111 @@
+import socket
+import json
 
-'''usuarios_cadastrados = Cliente.carregar_clientes()
-if Cliente.login(2,44,usuarios_cadastrados):
-    print("s")
-else:
-    print("n")'''
+HOST = '127.0.0.1'
+PORT = 65432
 
-'''geren = GerenciadorViagens()
-for chave, valor in geren.trechos.items():
-    print(f"Trecho {chave} => {valor.trecho}")
-    print(f"Assentos disponíveis => {valor.ASSENTOS}\n")
+def conectar():
+    s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s1.connect((HOST, PORT))
+    return s1
 
-print("Para escolher um trecho digite seu número correspondente:")'''
+def desconectar(s1):
+    s1.close()
 
-'''geren.diminuir_assentos("1")
+def enviar_dados(s1, opcode, dados):
+    mensagem = {
+        "opcode": opcode,
+        "dados": dados
+    }
+    s1.sendall(json.dumps(mensagem).encode())
+    resposta = s1.recv(1024).decode()
+    return json.loads(resposta)
 
-print(geren.trechos['1'])
+def logout(s1):
+    print("Adeus")
+    desconectar(s1)
 
-geren.aumentar_assentos("1")
-print(geren.trechos["1"])
+def login(s1):
+    print("Digite SAIR para sair.")
+    id = input("Digite seu ID: ")
+    if id == "SAIR":
+        desconectar(s1)
+    senha = input("Digite sua senha: ")
+    credenciais ={
+        'id':id,
+        'senha':senha
+    } 
+    resposta = enviar_dados(s1, 1, credenciais)
 
-geren.adicionar_trecho(5,"Teresina -> Palmas")
-geren.adicionar_trecho(6,"Palmas -> Goiânia")
-geren.adicionar_trecho(7,"Goiânia -> Campo Grande")
-geren.adicionar_trecho(8,"Campo Grande -> São Paulo")
-geren.adicionar_trecho(9,"São Paulo -> Rio de Janeiro")
+    if resposta == "Logado com sucesso":
+        return id
+    else:
+        print("Falha na autenticação.")
+        return None
 
-geren.diminuir_assentos("2")
-print(geren.trechos["2"])
-geren.diminuir_assentos("2")
-print(geren.trechos["2"])
-geren.realizar_viagem("2")
-print(geren.trechos["2"])'''
+def mostrar_rotas(s1):
+    resposta = enviar_dados(s1, 2, {})
+    print(f"{resposta}")
+    for rota in resposta:
+        print(f"ID: {rota['ID']} | Trecho: {rota['trecho']}")
 
-'''from models.viagem.GerenciadorViagem import GerenciadorViagens
+def comprar_passagem(s1, user):
+    mostrar_rotas(s1)
+    rotaID = input("\nInsira o ID da rota desejada: ")
 
-def mostrarMenu():
-    lista_opcoes = ["1","2","3","4"]
-    lista_opcoes_trecho = ['1','2','3','4','5','6','7','8','9']
-    geren = GerenciadorViagens()
-    opcao = 0
+    mensagem = {
+        'cliente_id': user,
+        'rotaID': rotaID
+    }
 
-    while (opcao != "4"):
-        print("\nO que deseja fazer?\n\n")
+    resposta = enviar_dados(s1, 3, mensagem)
+    print(resposta)
 
-        print("1. Comprar uma passagem\n")
-        print("2. Cancelar uma compra\n")
-        print("3. Verificar passagens compradas\n")
-        print("4. Sair\n\n")
-        
-        opcao = input("")
+def mostrar_passagens(s1, user):
+    mensagem = {'cliente_id': user}
+    passagens = enviar_dados(s1, 4, mensagem)
 
-        while (opcao not in lista_opcoes):
-            opcao = input("Por favor selecione uma opcao valida: ")
+    for passagem in passagens:
+        print(f"ID: {passagem['id_passagem']} | Rota: {passagem['rota']}")
 
-        if (opcao == "1"):
-            print("Trechos disponíveis:\n")
-            for chave, valor in geren.trechos.items():
-                print(f"Trecho {chave} => {valor.trecho}")
-                print(f"Assentos disponíveis => {valor.ASSENTOS}\n")
+def cancelar_compra(s1, user):
+    mostrar_passagens(s1, user)
+    passagemID = input("\nInsira o ID da passagem: ")
 
-            print("Para escolher um trecho digite seu número correspondente:\n")
-            opcao_trecho = input("")
-            while opcao_trecho not in lista_opcoes_trecho:
-                opcao_trecho = input("\nOpcao invalida => Escolha uma nova:")
+    mensagem = {'id_passagem': passagemID, 'userID': user}
+    resposta = enviar_dados(s1, 5, mensagem)
+    print(resposta)
 
-            #Para confirmar que escolheu certo
-            print("O TRECHO ESCOLHIDO FOI:\n")
-            print(f"{geren.trechos[opcao_trecho]}")
-            print("\n =-=- Deseja confirmar a compra? =-=-\n(1) SIM\n(2) NAO\n")
-            opcao_confirma_compra = input("")
-            if opcao_confirma_compra == "1":
-                pass
-                # processo de compra
-            else:
-               pass
-                # sair
+def menu(s1, user):
+    while True:
+        print("1. Comprar uma passagem")
+        print("2. Cancelar uma compra")
+        print("3. Sair")
 
-            # perguntar o local de partida + 'if' de nao achado
-            # perguntar o local de chegada + 'if' de nao achado
-            # juntarInformacoes
-            # mandar a solicitacao para o servidor
-            # pegar a resposta do servidor
-        elif (opcao == "2"):
-            pass
-            # mostrar uma lista de passagens associadas ao usuario
-            # pedir o 'ID' da passagem selecionada
-            # juntarInformacoes
-            # enviar a solicitacao para o servidor
-            # pegar a resposta do servidor
-        elif (opcao == "3"):
-            pass
-            # mostrar uma lista de passagens associadas ao usuario
-            # pedir o 'ID' da passagem selecionada
-            # juntarInformacoes
-            # enviar a solicitacao para o servidor
-            # pegar a resposta do servidor
+        operacao = input(": ")
 
-mostrarMenu()
-'''
+        if operacao == '1':
+            comprar_passagem(s1, user)
+        elif operacao == '2':
+            cancelar_compra(s1, user)
+        elif operacao == '3':
+            logout(s1)
+            break
+        else:
+            print("Por favor, selecione uma opção válida.")
 
-from models.client.cliente_threads import mainCliente
+def main():
+    s1 = conectar()
+    user = login(s1)
 
+    if user:
+        menu(s1, user)
+
+if __name__ == "__main__":
+    main()
+
+
+<<<<<<< Updated upstream
 mainCliente()
+=======
+>>>>>>> Stashed changes
