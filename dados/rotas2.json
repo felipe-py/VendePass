@@ -9,7 +9,7 @@
     {
         "ID": "2",
         "trecho": "Recife -> Fortaleza",
-        "assentos_disponiveis": 20,
+        "assentos_disponiveis": 19,
         "cidadeSaida": "Recife",
         "cidadeChegada": "Fortaleza"
     },
@@ -23,7 +23,7 @@
     {
         "ID": "4",
         "trecho": "Natal -> Teresina",
-        "assentos_disponiveis": 1,
+        "assentos_disponiveis": 0,
         "cidadeSaida": "Natal",
         "cidadeChegada": "Teresina"
     }

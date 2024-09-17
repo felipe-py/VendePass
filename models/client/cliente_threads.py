@@ -4,12 +4,6 @@ import json
 HOST = '127.0.0.1'
 PORT = 65432
 
-<<<<<<< Updated upstream
-def envia_requisicao_login(cliente_socket):
-    # Solicita credenciais do usuário
-    identificador = input("Identificador: ")
-    senha = input("Senha: ")
-=======
 def conectar():
     s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s1.connect(HOST, PORT)
@@ -36,7 +30,6 @@ def enviar_dados(s1, opcode, dados):
 def logout(s1):
     print("Adeus")
     login(s1)
->>>>>>> Stashed changes
     
     return
 
@@ -81,44 +74,13 @@ def comprar_passagem(s1, user):
         reposta = enviar_dados(s1, 3, mensagem)
         rota = resposta['rota']
 
-<<<<<<< Updated upstream
-        while True:
-            # Solicita um número inteiro ao usuário
-            try:
-                numero = int(input("Digite um número inteiro:\n"))  
-            except ValueError:
-                print("Entrada inválida. Por favor, digite um número inteiro.")
-                continue
-
-            # Envia o número ao servidor
-            cliente.sendall(struct.pack('!I', numero))  # Empacota como inteiro de 4 bytes (big-endian)
-
-            # Recebe e exibe a resposta do servidor
-            data = cliente.recv(1024)
-            if not data:
-                print("Conexão perdida com o servidor.")
-                break
-            
-            numero_recebido = struct.unpack('!I', data)[0]  # Desempacota o inteiro
-            print(f"Recebido do servidor: {numero_recebido}")
-            
-            # Permite ao cliente sair se o número for 4
-            if numero == 4:
-                print("Encerrando a conexão...")
-                break
-=======
         print(f"{user} comprou uma passagem para a rota {rota}")
 
         return True
->>>>>>> Stashed changes
     finally:
         print("Alguma coisa deu errado, verifique o ID da rota inserido.\n")
         return False
 
-<<<<<<< Updated upstream
-if ativo():
-    mainCliente()
-=======
 
 def mostrar_passagens(s1, user):
     mensagem = {} # Apenas para manter a estrutura de envio de mensagens
@@ -175,4 +137,3 @@ def main():
     menu(s1, user)
 if __name__ == "__main__":
     main()
->>>>>>> Stashed changes

@@ -1,41 +1,6 @@
 import socket
 import threading
 import struct
-<<<<<<< Updated upstream
-
-from models.client import Cliente
-
-def espacos():
-    print("=-=-=-=-=-=-=-=-=-=-=-=-==-=-\n")
-    
-def ativo():
-    return True
-
-def tratar_cliente(conexao, endereco):
-    print(f"Conexão estabelecida com {endereco}")
-    espacos()
-    
-    # Recebe dados de login do cliente
-    try:
-        login_data = conexao.recv(1024).decode()
-        identificador, senha = login_data.split(',')
-        if Cliente.login(identificador, senha):
-            conexao.sendall(b"Login bem-sucedido")
-            print(f"Cliente [ID:{identificador}] {endereco} fez login com sucesso")
-        else:
-            conexao.sendall(b"Login falhou")
-            conexao.close()
-            return
-    except Exception as e:
-        print(f"Erro ao processar login: {e}")
-        conexao.close()
-        return
-
-    while True:
-        try:
-            data = conexao.recv(1024)
-            if not data:
-=======
 import json
 import os
 from pathlib import Path
@@ -208,7 +173,6 @@ def tratar_cliente(conexao_servidor):
         while True:
             mensagem = conexao_servidor.recv(1024).decode()
             if not mensagem:
->>>>>>> Stashed changes
                 break
             print(f"Mensagem recebida: {mensagem}")
             dados = json.loads(mensagem)
@@ -240,20 +204,6 @@ def tratar_cliente(conexao_servidor):
 
 def main():
     IP_SERVIDOR = '127.0.0.1'
-<<<<<<< Updated upstream
-    PORTA_SERVIDOR = 5000
-
-    servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    servidor.bind((IP_SERVIDOR, PORTA_SERVIDOR))
-    servidor.listen()
-    ativo()
-
-    print(f"Servidor escutando no IP {IP_SERVIDOR} e porta {PORTA_SERVIDOR}")
-
-    while True:
-        conexao, endereco = servidor.accept()
-        print(f"Nova conexão de {endereco}")
-=======
     PORTA_SERVIDOR = 65432
 
     servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -274,8 +224,4 @@ def main():
 
 if __name__ == "__main__":
     main()
->>>>>>> Stashed changes
 
-        cliente_thread = threading.Thread(target=tratar_cliente, args=(conexao, endereco))
-        cliente_thread.start()
-    

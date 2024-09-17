@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 [
     {
         "id_passagem": 1,
@@ -114,6 +112,17 @@
         "cliente_id": "1",
         "rota": "Natal -> Teresina",
         "estaCancelado": 1
+    },
+    {
+        "id_passagem": 20,
+        "cliente_id": "1",
+        "rota": "Recife -> Fortaleza",
+        "estaCancelado": false
+    },
+    {
+        "id_passagem": 21,
+        "cliente_id": "2",
+        "rota": "Natal -> Teresina",
+        "estaCancelado": false
     }
 ]
->>>>>>> Stashed changes

@@ -105,7 +105,3 @@ if __name__ == "__main__":
     main()
 
 
-<<<<<<< Updated upstream
-mainCliente()
-=======
->>>>>>> Stashed changes
