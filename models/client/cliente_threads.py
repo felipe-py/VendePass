@@ -4,15 +4,18 @@ import json
 HOST = '127.0.0.1'
 PORT = 65432
 
-
+#Função para criar um socket e iniciar a conexão com o servidor usando o TCP/IP4.
 def conectar():
     s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s1.connect((HOST, PORT))
     return s1
 
+#Função para fechar a conexão criada pelo socket.
 def desconectar(s1):
     s1.close()
 
+#Essa função recebe um conjunto de dados retornados por uma função do cliente (que já vem como dicionario) e junta em um dicionario
+#com o opcode. Depois envia os dados, aguarda a resposta do servidor e, quando ela chegar, retorna a resposta.
 def enviar_dados(s1, opcode, dados):
     mensagem = {
         "opcode": opcode,
@@ -22,10 +25,13 @@ def enviar_dados(s1, opcode, dados):
     resposta = s1.recv(1024).decode()
     return json.loads(resposta)
 
+#Essa função só manda uma mensagem antes de desconectar.
 def logout(s1):
     print("Adeus")
     desconectar(s1)
 
+#Função para realizar o login, recebe os inputs do usuário, manda para o servidor e, em caso de login bem sucedido, 
+#retorna o usuário logado.
 def login(s1):
     print("\nDigite SAIR para sair.\n")
     id = input("Digite seu ID: ")
@@ -48,12 +54,15 @@ def login(s1):
             return None
     return None
 
+#Essa função solicita uma lista de rotas com assentos disponíveis para o servidor, e depois mostra os resultados ao
+#usuário
 def mostrar_rotas(s1):
     resposta = enviar_dados(s1, 2, {})
-    # print(f"{resposta}")
     for rota in resposta:
         print(f"ID: {rota['ID']} | Trecho: {rota['trecho']}")
 
+#Essa função realiza a compra de passagens, ela chama 'mostrar_rotas' para que o usuário possa ver as rotas disponíveis
+#antes de realizar a compra, o tratamento de solicitações improprias se dá no servidor.
 def comprar_passagem(s1, user):
     mostrar_rotas(s1)
     rotaID = input("\nInsira o ID da rota desejada: ")
@@ -67,6 +76,7 @@ def comprar_passagem(s1, user):
     print(f"{resposta}\n")
     espacos()
 
+#Similar a 'mostrar_rotas', mas mostrando as passagens que tem 'user' como comprador.
 def mostrar_passagens(s1, user):
     mensagem = {'cliente_id': user}
     passagens = enviar_dados(s1, 4, mensagem)
@@ -74,6 +84,8 @@ def mostrar_passagens(s1, user):
     for passagem in passagens:
         print(f"ID: {passagem['id_passagem']} | Rota: {passagem['rota']}")
 
+#Função para cancelar compra, funciona de forma similar a compra, manda o usuário pois o processo de cancelamento opera em
+#dois bancos de dado, e em um deles o objeto é encontrado a partir do usuário.
 def cancelar_compra(s1, user):
     mostrar_passagens(s1, user)
     passagemID = input("\nInsira o ID da passagem: ")
@@ -83,9 +95,11 @@ def cancelar_compra(s1, user):
     print(f"{resposta}\n")
     espacos()
 
+#Print de um separador.
 def espacos():
     print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
+#Menu do programa, fica rodando contínuamente para que depois de um operação o usuário possa realizar outras sem ter que logar novamente.
 def menu(s1, user):
     while True:
         print("1. Comprar uma passagem")
