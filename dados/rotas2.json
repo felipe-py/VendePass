@@ -2,28 +2,28 @@
     {
         "ID": "1",
         "trecho": "Salvador -> Recife",
-        "assentos_disponiveis": 11,
+        "assentos_disponiveis": 20,
         "cidadeSaida": "Salvador",
         "cidadeChegada": "Recife"
     },
     {
         "ID": "2",
         "trecho": "Recife -> Fortaleza",
-        "assentos_disponiveis": 19,
+        "assentos_disponiveis": 20,
         "cidadeSaida": "Recife",
         "cidadeChegada": "Fortaleza"
     },
     {
         "ID": "3",
         "trecho": "Fortaleza -> Natal",
-        "assentos_disponiveis": 3,
+        "assentos_disponiveis": 20,
         "cidadeSaida": "Fortaleza",
         "cidadeChegada": "Natal"
     },
     {
         "ID": "4",
         "trecho": "Natal -> Teresina",
-        "assentos_disponiveis": 0,
+        "assentos_disponiveis": 20,
         "cidadeSaida": "Natal",
         "cidadeChegada": "Teresina"
     }
