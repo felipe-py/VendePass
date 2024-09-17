@@ -60,7 +60,6 @@ def atualizar_usuarios(usuarios):
     diretorio_dos_usuarios = os.path.join(diretorio_dos_BD, 'clientes.json')
     salvar_dados(diretorio_dos_usuarios, usuarios)
 
-#Função para logar, até aqui ta funcionando.
 def logar(id, senha):
     usuarios = carregar_usuarios()
     if usuarios is None:
@@ -78,7 +77,6 @@ def contar_passagens():
         contador +=1
     return contador
 
-#Funcionando.
 def comprar_passagem(userID, rotaID):
     with mutex_compra:
         rotas = carregar_rotas()
@@ -117,8 +115,6 @@ def comprar_passagem(userID, rotaID):
 
 
 def buscar_passagens_de_usuario(userID):
-    #passagens = carregar_passagens()
-    #passagens_usuario = [p for p in passagens if p['cliente_id'] == userID and not p['estaCancelado']]
     usuarios = carregar_usuarios()
     passagens_validas = []
     for user in usuarios:
@@ -161,7 +157,6 @@ def mostrar_rotas():
     for rota in rotas:
         if rota['assentos_disponiveis']>0:
             rotas_disponiveis.append(rota)
-    #rotas_disponiveis = [rota for rota in rotas if rota['assentos_disponiveis'] > 0]
     print(f"tem um total de {len(rotas_disponiveis)} rotas disponiveis")
     for r in rotas_disponiveis:
         print(f"{r['trecho']}")
@@ -180,8 +175,7 @@ def tratar_cliente(conexao_servidor):
             conteudo = dados['dados']
 
             print(f"os dados enviados foram {conteudo}")
-            if opcode == 1:  # Login
-                print(f"os argumentos para a função foram {conteudo['id']} e {conteudo['senha']}")
+            if opcode == 1: 
                 resultado = logar(conteudo['id'], conteudo['senha'])
             elif opcode == 2:  # Mostrar rotas
                 resultado = mostrar_rotas()
@@ -190,7 +184,6 @@ def tratar_cliente(conexao_servidor):
             elif opcode == 4:  # Buscar passagens
                 resultado = buscar_passagens_de_usuario(conteudo['cliente_id'])
             elif opcode == 5:  # Cancelar passagem
-                print(f"O que entrou em cancelar foi: {conteudo['id_passagem']}")
                 resultado = cancelar_passagem(conteudo['id_passagem'], conteudo['userID'])
             else:
                 resultado = "Operação inválida"
@@ -216,8 +209,6 @@ def main():
     while True:
         conexao_servidor, endereco_cliente = servidor.accept()
         print(f"Nova conexão de {endereco_cliente}")
-        
-        # Criando uma thread para tratar cada cliente
         cliente_thread = threading.Thread(target=tratar_cliente, args=(conexao_servidor,))
         cliente_thread.start()
 

@@ -4,10 +4,10 @@ import json
 HOST = '127.0.0.1'
 PORT = 65432
 
+
 def conectar():
     s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s1.connect(HOST, PORT)
-
+    s1.connect((HOST, PORT))
     return s1
 
 def desconectar(s1):
@@ -15,54 +15,47 @@ def desconectar(s1):
 
 def enviar_dados(s1, opcode, dados):
     mensagem = {
-        "opcode":opcode,
+        "opcode": opcode,
         "dados": dados
     }
-
     s1.sendall(json.dumps(mensagem).encode())
     resposta = s1.recv(1024).decode()
-
-    if (opcode == 2):
-        return resposta
-    if (opcode != 2):
-        print(resposta)
+    return json.loads(resposta)
 
 def logout(s1):
     print("Adeus")
-    login(s1)
-    
-    return
-
+    desconectar(s1)
 
 def login(s1):
-    print("Para sair digite SAIR")
+    print("\nDigite SAIR para sair.\n")
     id = input("Digite seu ID: ")
-    if (id == 'SAIR'):
-        desconectar(s1)
-    senha = input("Digite sua senha: ")
-
-    credenciais = {'id': id, 'senha': senha}
-
-    resposta = enviar_dados(s1, 1, credenciais)
-    if (resposta == "Logado com sucesso."):
-        return id
+    if id == "SAIR":
+        espacos()
+        logout(s1)
     else:
-        return Null
+        senha = input("Digite sua senha: ")
+        credenciais ={
+            'id':id,
+            'senha':senha
+        } 
+        resposta = enviar_dados(s1, 1, credenciais)
+        print("\n")
+        espacos()
+        if resposta == "Logado com sucesso":
+            return id
+        else:
+            print("Falha na autenticação.")
+            return None
+    return None
 
 def mostrar_rotas(s1):
-    mensagem = {} # Apenas para preservar o formato da mensagem ao servidor
-    resposta = enviar_dados(s1, 2, mensagem)
-
+    resposta = enviar_dados(s1, 2, {})
+    # print(f"{resposta}")
     for rota in resposta:
-        rotaID = rota['ID']
-        trecho = rota['trecho']
-        print(f"ID:{rotaID} Trecho:{trecho}\n")
-
-    return
-
+        print(f"ID: {rota['ID']} | Trecho: {rota['trecho']}")
 
 def comprar_passagem(s1, user):
-    mostrar_rotas()
+    mostrar_rotas(s1)
     rotaID = input("\nInsira o ID da rota desejada: ")
 
     mensagem = {
@@ -70,70 +63,44 @@ def comprar_passagem(s1, user):
         'rotaID': rotaID
     }
 
-    try:
-        reposta = enviar_dados(s1, 3, mensagem)
-        rota = resposta['rota']
-
-        print(f"{user} comprou uma passagem para a rota {rota}")
-
-        return True
-    finally:
-        print("Alguma coisa deu errado, verifique o ID da rota inserido.\n")
-        return False
-
+    resposta = enviar_dados(s1, 3, mensagem)
+    print(f"{resposta}\n")
+    espacos()
 
 def mostrar_passagens(s1, user):
-    mensagem = {} # Apenas para manter a estrutura de envio de mensagens
+    mensagem = {'cliente_id': user}
     passagens = enviar_dados(s1, 4, mensagem)
-    
-    try:
-        for passagem in passagens:
-            id = passagem['id_passagem']
-            rota = passagem['rota']
 
-            print(f"ID:{id}  rota:{rota}")
-            return True
-    finally:
-        return False
+    for passagem in passagens:
+        print(f"ID: {passagem['id_passagem']} | Rota: {passagem['rota']}")
 
 def cancelar_compra(s1, user):
-    mostrar_passagens()
-    passagemID = input("\nIsira o ID da passagem: ")
+    mostrar_passagens(s1, user)
+    passagemID = input("\nInsira o ID da passagem: ")
 
-    mensagem = {
-        'cliente_id': user,
-        'id_passagem': passagemID
-    }
-    try:
-        resposta = enviar_dados(s1, 5, mensagem)
-        passagem = resposta['id_passagem']
+    mensagem = {'id_passagem': passagemID, 'userID': user}
+    resposta = enviar_dados(s1, 5, mensagem)
+    print(f"{resposta}\n")
+    espacos()
 
-        print(f"{user} cancelou a passagem {passagem}")
-
-        return True
-    finally:
-        print("Alguma coisa deu errado, verifique o ID da passagem inserido.\n")
-        return False
+def espacos():
+    print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
 def menu(s1, user):
-    print("1.Comprar uma passagem.\n")
-    print("2.Cancelar uma compra.\n")
-    print("3.Sair\n\n")
+    while True:
+        print("1. Comprar uma passagem")
+        print("2. Cancelar uma compra")
+        print("3. Sair")
 
-    operacao = input(": ")
-    while (operacao != 3):
-        while (operacao not in range(1,4)):
-            operacao = input("Por favor, selecione uma opção válida\n: ")
-        if (operacao == 1):
+        operacao = input("\n: ")
+        espacos()
+
+        if operacao == '1':
             comprar_passagem(s1, user)
-        if (operacao == 2):
+        elif operacao == '2':
             cancelar_compra(s1, user)
-    logout(s1)
-
-def main():
-    s1 = conectar()
-    user = login(s1)
-
-    menu(s1, user)
-if __name__ == "__main__":
-    main()
+        elif operacao == '3':
+            logout(s1)
+            break
+        else:
+            print("\nPor favor, selecione uma opção válida.")
