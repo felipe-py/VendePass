@@ -85,7 +85,7 @@
                 "id_passagem": 22,
                 "cliente_id": "1",
                 "rota": "Salvador -> Recife",
-                "estaCancelado": false
+                "estaCancelado": 1
             },
             {
                 "id_passagem": 25,
@@ -109,7 +109,13 @@
                 "id_passagem": 29,
                 "cliente_id": "1",
                 "rota": "Salvador -> Recife",
-                "estaCancelado": false
+                "estaCancelado": 1
+            },
+            {
+                "id_passagem": 30,
+                "cliente_id": "1",
+                "rota": "Fortaleza -> Natal",
+                "estaCancelado": 1
             }
         ]
     },

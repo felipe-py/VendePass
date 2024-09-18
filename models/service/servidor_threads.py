@@ -64,8 +64,7 @@ def atualizar_usuarios(usuarios):
 
 #Função para realizar o login, ela recebe o ID e a senha e compara a um usuário do BD 'clientes' e retorna uma mensagem
 #que vai ser interpretada no cliente como uma autorização (ou não) para prosseguir com o menu
-def logar(id, senha):
-    usuarios = carregar_usuarios()
+def logar(id, senha, usuarios):
     if usuarios is None:
         print("A lista de usuarios esta vazia")
     for user in usuarios:
@@ -74,25 +73,22 @@ def logar(id, senha):
     return "Login falhou"
 
 #Função para contar o numero de passagens já criadas, importante para determinar o ID de uma nova passagem a ser gerada
-def contar_passagens():
+def contar_passagens(passagens):
     contador = 1
-    passagens = carregar_passagens()
     for passagem in passagens:
         contador +=1
     return contador
 
 #Essa função executa a compra de uma passagem, detalhe que o processo de compra envolve mais do que só essa função, as etapas
 #desse processo são determinadas no cliente.
-def comprar_passagem(userID, rotaID):
-    # with mutex_compra:
-    rotas = carregar_rotas()
+def comprar_passagem(userID, rotaID, rotas, passagens, usuarios):
     for rota in rotas:
         if rota['ID'] == rotaID:
             print("rota encontrada")
             if rota['assentos_disponiveis'] > 0:
-                print("conferiu o numero de assentos corretamente")
-                cont = contar_passagens()
-                print(f" As informações para criar a passagem: {cont}, {userID} ")
+                print("tem assentos disponiveis")
+                cont = contar_passagens(passagens)
+                print(f"\n\nAs informações para criar a passagem: {cont}, {userID}\n\n")
                 nova_passagem = {
                     "id_passagem": cont,
                     "cliente_id": userID,
@@ -100,10 +96,8 @@ def comprar_passagem(userID, rotaID):
                     "estaCancelado": False
                 }
                 print(f"foi criada: {nova_passagem}")
-                passagens = carregar_passagens()
                 passagens.append(nova_passagem)
 
-                usuarios = carregar_usuarios()
                 for user in usuarios:
                     if user['id'] == userID:
                         array = user['passagens']
@@ -118,11 +112,10 @@ def comprar_passagem(userID, rotaID):
                 return "Passagem criada com sucesso"
             else:
                 return "Sem assentos disponíveis"
-        return "Rota não encontrada"
+    return "Rota não encontrada"
 
 #Função que busca as passagens de um dado usuário e retorna todas que não estejam marcadas como canceladas.
-def buscar_passagens_de_usuario(userID):
-    usuarios = carregar_usuarios()
+def buscar_passagens_de_usuario(userID, usuarios):
     passagens_validas = []
     for user in usuarios:
         if (user['id'] == userID):
@@ -137,16 +130,14 @@ def buscar_passagens_de_usuario(userID):
 #Função que cancela uma passagem, para todos os propósitos a requerida passagem não existe mais, contudo
 #o registro dela permanece no BD das passagens e nas passagens do usuário no BD dos clientes, porém marcado
 #como passagem cancelada.
-def cancelar_passagem(passagemID, userID):
+def cancelar_passagem(passagemID, userID, passagens, usuarios):
     # with mutex_cancelamento:
-    passagens = carregar_passagens()
     print("carregou o BD")
     for passagem in passagens:
         if passagem['id_passagem'] == int(passagemID):
             print("A passagem foi encontrada.")
             if passagem['estaCancelado'] != 1:
                 passagem['estaCancelado'] = 1
-                usuarios = carregar_usuarios()
                 for user in usuarios:
                     if user['id'] == userID:
                         for p in user['passagens']:
@@ -161,8 +152,7 @@ def cancelar_passagem(passagemID, userID):
     return "Passagem não encontrada."
 
 #Função para mostrar as rotas disponíveis para compra a partir da solicitação do cliente
-def mostrar_rotas():
-    rotas = carregar_rotas()
+def mostrar_rotas(rotas):
     rotas_disponiveis = []
     for rota in rotas:
         if rota['assentos_disponiveis']>0:
@@ -174,7 +164,7 @@ def mostrar_rotas():
 
 #Essa função interpreta a solicitação feita para o servidor, ela separa o 'opcode' da mensagem, seleciona
 #a função a ser executada e envia os argumentos para sua execução.
-def tratar_cliente(conexao_servidor):
+def tratar_cliente(conexao_servidor, usuarios, passagens, rotas):
     try:
         while True:
             mensagem = conexao_servidor.recv(1024).decode()
@@ -187,15 +177,15 @@ def tratar_cliente(conexao_servidor):
 
             print(f"os dados enviados foram {conteudo}")
             if opcode == 1: 
-                resultado = logar(conteudo['id'], conteudo['senha'])
-            elif opcode == 2:  # Mostrar rotas
-                resultado = mostrar_rotas()
-            elif opcode == 3:  # Comprar passagem
-                resultado = comprar_passagem(conteudo['cliente_id'], conteudo['rotaID'])
-            elif opcode == 4:  # Buscar passagens
-                resultado = buscar_passagens_de_usuario(conteudo['cliente_id'])
-            elif opcode == 5:  # Cancelar passagem
-                resultado = cancelar_passagem(conteudo['id_passagem'], conteudo['userID'])
+                resultado = logar(conteudo['id'], conteudo['senha'], usuarios)
+            elif opcode == 2:
+                resultado = mostrar_rotas(rotas)
+            elif opcode == 3:
+                resultado = comprar_passagem(conteudo['cliente_id'], conteudo['rotaID'], rotas, passagens, usuarios)
+            elif opcode == 4:
+                resultado = buscar_passagens_de_usuario(conteudo['cliente_id'], usuarios)
+            elif opcode == 5:
+                resultado = cancelar_passagem(conteudo['id_passagem'], conteudo['userID'], passagens, usuarios)
             else:
                 resultado = "Operação inválida"
 
@@ -206,6 +196,7 @@ def tratar_cliente(conexao_servidor):
         conexao_servidor.close()
 
 # Essa função mantém o servidor ativo e conectado no endereço, ela também cria novas threads para conexões (até 8)
+# e carrega os BD que serão usados nas funções.
 def main():
     IP_SERVIDOR = '127.0.0.1'
     PORTA_SERVIDOR = 65432
@@ -215,12 +206,16 @@ def main():
     servidor.bind((IP_SERVIDOR, PORTA_SERVIDOR))
     servidor.listen(8)
 
+    rotas = carregar_rotas()
+    usuarios = carregar_usuarios()
+    passagens = carregar_passagens()
+
     print("Servidor escutando...")
 
     while True:
         conexao_servidor, endereco_cliente = servidor.accept()
         print(f"Nova conexão de {endereco_cliente}")
-        cliente_thread = threading.Thread(target=tratar_cliente, args=(conexao_servidor,))
+        cliente_thread = threading.Thread(target=tratar_cliente, args=(conexao_servidor, usuarios, passagens, rotas))
         cliente_thread.start()
 
 
