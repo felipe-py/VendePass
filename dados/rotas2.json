@@ -2,7 +2,7 @@
     {
         "ID": "1",
         "trecho": "Salvador -> Recife",
-        "assentos_disponiveis": 18,
+        "assentos_disponiveis": 16,
         "cidadeSaida": "Salvador",
         "cidadeChegada": "Recife"
     },

@@ -7,8 +7,7 @@ from pathlib import Path
 from models.client import Cliente
 
 #Criados os 2 MUTEX que irão controlar as operações de compra e cancelamento.
-mutex_compra = threading.Lock()
-mutex_cancelamento = threading.Lock()
+mutex = threading.Lock()
 
 #Definição de diretórios para facilitar outras funções.
 diretorio_do_servidor = Path(__file__).parent
@@ -85,39 +84,40 @@ def contar_passagens():
 #Essa função executa a compra de uma passagem, detalhe que o processo de compra envolve mais do que só essa função, as etapas
 #desse processo são determinadas no cliente.
 def comprar_passagem(userID, rotaID):
-    with mutex_compra:
-        rotas = carregar_rotas()
-        for rota in rotas:
-            if rota['ID'] == rotaID:
-                print("rota encontrada")
-                if rota['assentos_disponiveis'] > 0:
-                    print("conferiu o numero de assentos corretamente")
-                    cont = contar_passagens()
-                    print(f" As informações para criar a passagem: {cont}, {userID} ")
-                    nova_passagem = {
-                        "id_passagem": cont,
-                        "cliente_id": userID,
-                        "rota": rota['trecho'],
-                        "estaCancelado": False
-                    }
-                    print(f"foi criada: {nova_passagem}")
-                    passagens = carregar_passagens()
-                    passagens.append(nova_passagem)
-                    atualizar_passagens(passagens)
+    # with mutex_compra:
+    rotas = carregar_rotas()
+    for rota in rotas:
+        if rota['ID'] == rotaID:
+            print("rota encontrada")
+            if rota['assentos_disponiveis'] > 0:
+                print("conferiu o numero de assentos corretamente")
+                cont = contar_passagens()
+                print(f" As informações para criar a passagem: {cont}, {userID} ")
+                nova_passagem = {
+                    "id_passagem": cont,
+                    "cliente_id": userID,
+                    "rota": rota['trecho'],
+                    "estaCancelado": False
+                }
+                print(f"foi criada: {nova_passagem}")
+                passagens = carregar_passagens()
+                passagens.append(nova_passagem)
 
-                    usuarios = carregar_usuarios()
-                    for user in usuarios:
-                        if user['id'] == userID:
-                            array = user['passagens']
-                            array.append(nova_passagem)
+                usuarios = carregar_usuarios()
+                for user in usuarios:
+                    if user['id'] == userID:
+                        array = user['passagens']
+                        array.append(nova_passagem)
+
+                rota['assentos_disponiveis'] -= 1
+                with mutex:
+                    atualizar_rotas(rotas)
+                    atualizar_passagens(passagens)
                     atualizar_usuarios(usuarios) 
 
-                    rota['assentos_disponiveis'] -= 1
-                    atualizar_rotas(rotas)
-
-                    return "Passagem criada com sucesso"
-                else:
-                    return "Sem assentos disponíveis"
+                return "Passagem criada com sucesso"
+            else:
+                return "Sem assentos disponíveis"
         return "Rota não encontrada"
 
 #Função que busca as passagens de um dado usuário e retorna todas que não estejam marcadas como canceladas.
@@ -138,27 +138,27 @@ def buscar_passagens_de_usuario(userID):
 #o registro dela permanece no BD das passagens e nas passagens do usuário no BD dos clientes, porém marcado
 #como passagem cancelada.
 def cancelar_passagem(passagemID, userID):
-    with mutex_cancelamento:
-        passagens = carregar_passagens()
-        print("carregou o BD")
-        for passagem in passagens:
-            if passagem['id_passagem'] == int(passagemID):
-                print("A passagem foi encontrada.")
-                if passagem['estaCancelado'] != 1:
-                    passagem['estaCancelado'] = 1
+    # with mutex_cancelamento:
+    passagens = carregar_passagens()
+    print("carregou o BD")
+    for passagem in passagens:
+        if passagem['id_passagem'] == int(passagemID):
+            print("A passagem foi encontrada.")
+            if passagem['estaCancelado'] != 1:
+                passagem['estaCancelado'] = 1
+                usuarios = carregar_usuarios()
+                for user in usuarios:
+                    if user['id'] == userID:
+                        for p in user['passagens']:
+                            if int(p['id_passagem']) == int(passagemID):
+                                p['estaCancelado'] = 1
+                with mutex:
                     atualizar_passagens(passagens)
-
-                    usuarios = carregar_usuarios()
-                    for user in usuarios:
-                        if user['id'] == userID:
-                            for p in user['passagens']:
-                                if int(p['id_passagem']) == int(passagemID):
-                                    p['estaCancelado'] = 1
                     atualizar_usuarios(usuarios)
-                    return "Passagem cancelada com sucesso."
-                else:
-                    return "Essa passagem já foi cancelada"
-        return "Passagem não encontrada."
+                return "Passagem cancelada com sucesso."
+            else:
+                return "Essa passagem já foi cancelada"
+    return "Passagem não encontrada."
 
 #Função para mostrar as rotas disponíveis para compra a partir da solicitação do cliente
 def mostrar_rotas():
