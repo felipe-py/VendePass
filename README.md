@@ -25,7 +25,6 @@ O protocolo de comunicação do projeto possui como base principal os subsistema
 <div id="sumario">
 	<ul>
         <li><a href="#Software"> Softwares Utilizadas </a></li>
-        
         <li><a href="#conclusao"> Conclusão </a></li>
         <li><a href="#execucaoProjeto"> Execução do Projeto </a></li>
         <li><a href="#referencias"> Referências </a></li>
