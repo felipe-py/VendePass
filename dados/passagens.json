@@ -105,7 +105,7 @@
         "id_passagem": 18,
         "cliente_id": "1",
         "rota": "Fortaleza -> Natal",
-        "estaCancelado": false
+        "estaCancelado": 1
     },
     {
         "id_passagem": 19,
@@ -123,6 +123,42 @@
         "id_passagem": 21,
         "cliente_id": "2",
         "rota": "Natal -> Teresina",
+        "estaCancelado": false
+    },
+    {
+        "id_passagem": 22,
+        "cliente_id": "1",
+        "rota": "Salvador -> Recife",
+        "estaCancelado": false
+    },
+    {
+        "id_passagem": 23,
+        "cliente_id": "2",
+        "rota": "Recife -> Fortaleza",
+        "estaCancelado": false
+    },
+    {
+        "id_passagem": 24,
+        "cliente_id": "2",
+        "rota": "Natal -> Teresina",
+        "estaCancelado": 1
+    },
+    {
+        "id_passagem": 25,
+        "cliente_id": "1",
+        "rota": "Natal -> Teresina",
+        "estaCancelado": false
+    },
+    {
+        "id_passagem": 26,
+        "cliente_id": "2",
+        "rota": "Recife -> Fortaleza",
+        "estaCancelado": false
+    },
+    {
+        "id_passagem": 27,
+        "cliente_id": "1",
+        "rota": "Salvador -> Recife",
         "estaCancelado": false
     }
 ]

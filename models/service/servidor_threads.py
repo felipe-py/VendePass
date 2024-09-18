@@ -14,7 +14,7 @@ mutex_cancelamento = threading.Lock()
 diretorio_do_servidor = Path(__file__).parent
 diretorio_dos_BD = diretorio_do_servidor.parent.parent / 'dados'
 
-#função para carregar dados de forma genérica, foi substituida por específicas, mas deixei pois pode vir a ser útil.
+#Função para carregar dados de forma genérica
 def carregar_dados(arquivo):
     try:
         with open(arquivo, 'r') as f:
@@ -25,7 +25,7 @@ def carregar_dados(arquivo):
         print(f"Erro ao decodificar JSON: {e}")
     return None
 
-
+#Função para salvar dados de forma genérica
 def salvar_dados(arquivo, BD):
     try:
         with open(arquivo, 'w') as arquivo:
@@ -33,7 +33,7 @@ def salvar_dados(arquivo, BD):
     except Exception as e:
         print(f"Erro ao salvar dados: {e}")
 
-
+#Funções específicas para carregar as rotas, passagens e usuarios. Elas rotornam seus respectivos Bancos de Dados(BD)
 def carregar_rotas():
     diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas2.json')
     return carregar_dados(diretorio_das_rotas)
@@ -48,7 +48,8 @@ def carregar_usuarios():
     diretorio_dos_usuarios = os.path.join(diretorio_dos_BD, 'clientes.json')
     return carregar_dados(diretorio_dos_usuarios)
 
-
+#Funções para atualizar os bancos de dados. Elas recebem um BD que foi editado(como 'rotas') e chama a função
+#'salvar_dados' para realizar o dump no arquivo correto.
 def atualizar_rotas(rotas):
     diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas2.json')
     salvar_dados(diretorio_das_rotas, rotas)
@@ -62,6 +63,8 @@ def atualizar_usuarios(usuarios):
     diretorio_dos_usuarios = os.path.join(diretorio_dos_BD, 'clientes.json')
     salvar_dados(diretorio_dos_usuarios, usuarios)
 
+#Função para realizar o login, ela recebe o ID e a senha e compara a um usuário do BD 'clientes' e retorna uma mensagem
+#que vai ser interpretada no cliente como uma autorização (ou não) para prosseguir com o menu
 def logar(id, senha):
     usuarios = carregar_usuarios()
     if usuarios is None:
@@ -71,7 +74,7 @@ def logar(id, senha):
             return "Logado com sucesso"
     return "Login falhou"
 
-
+#Função para contar o numero de passagens já criadas, importante para determinar o ID de uma nova passagem a ser gerada
 def contar_passagens():
     contador = 1
     passagens = carregar_passagens()
@@ -79,6 +82,8 @@ def contar_passagens():
         contador +=1
     return contador
 
+#Essa função executa a compra de uma passagem, detalhe que o processo de compra envolve mais do que só essa função, as etapas
+#desse processo são determinadas no cliente.
 def comprar_passagem(userID, rotaID):
     with mutex_compra:
         rotas = carregar_rotas()
@@ -115,7 +120,7 @@ def comprar_passagem(userID, rotaID):
                     return "Sem assentos disponíveis"
         return "Rota não encontrada"
 
-
+#Função que busca as passagens de um dado usuário e retorna todas que não estejam marcadas como canceladas.
 def buscar_passagens_de_usuario(userID):
     usuarios = carregar_usuarios()
     passagens_validas = []
@@ -129,7 +134,9 @@ def buscar_passagens_de_usuario(userID):
             return passagens_validas
     return None
 
-
+#Função que cancela uma passagem, para todos os propósitos a requerida passagem não existe mais, contudo
+#o registro dela permanece no BD das passagens e nas passagens do usuário no BD dos clientes, porém marcado
+#como passagem cancelada.
 def cancelar_passagem(passagemID, userID):
     with mutex_cancelamento:
         passagens = carregar_passagens()
@@ -153,6 +160,7 @@ def cancelar_passagem(passagemID, userID):
                     return "Essa passagem já foi cancelada"
         return "Passagem não encontrada."
 
+#Função para mostrar as rotas disponíveis para compra a partir da solicitação do cliente
 def mostrar_rotas():
     rotas = carregar_rotas()
     rotas_disponiveis = []
@@ -164,7 +172,8 @@ def mostrar_rotas():
         print(f"{r['trecho']}")
     return rotas_disponiveis
 
-
+#Essa função interpreta a solicitação feita para o servidor, ela separa o 'opcode' da mensagem, seleciona
+#a função a ser executada e envia os argumentos para sua execução.
 def tratar_cliente(conexao_servidor):
     try:
         while True:
@@ -196,7 +205,7 @@ def tratar_cliente(conexao_servidor):
     finally:
         conexao_servidor.close()
 
-
+# Essa função mantém o servidor ativo e conectado no endereço, ela também cria novas threads para conexões (até 8)
 def main():
     IP_SERVIDOR = '127.0.0.1'
     PORTA_SERVIDOR = 65432
@@ -204,7 +213,7 @@ def main():
     servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     servidor.bind((IP_SERVIDOR, PORTA_SERVIDOR))
-    servidor.listen()
+    servidor.listen(8)
 
     print("Servidor escutando...")
 
