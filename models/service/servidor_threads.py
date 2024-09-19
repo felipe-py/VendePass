@@ -4,7 +4,7 @@ import struct
 import json
 import os
 from pathlib import Path
-from models.client import Cliente
+# from models.client import Cliente
 
 #Criados os 2 MUTEX que irão controlar as operações de compra e cancelamento.
 mutex = threading.Lock()
@@ -34,7 +34,7 @@ def salvar_dados(arquivo, BD):
 
 #Funções específicas para carregar as rotas, passagens e usuarios. Elas rotornam seus respectivos Bancos de Dados(BD)
 def carregar_rotas():
-    diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas2.json')
+    diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas.json')
     return carregar_dados(diretorio_das_rotas)
 
 
@@ -50,7 +50,7 @@ def carregar_usuarios():
 #Funções para atualizar os bancos de dados. Elas recebem um BD que foi editado(como 'rotas') e chama a função
 #'salvar_dados' para realizar o dump no arquivo correto.
 def atualizar_rotas(rotas):
-    diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas2.json')
+    diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas.json')
     salvar_dados(diretorio_das_rotas, rotas)
 
 
@@ -81,38 +81,86 @@ def contar_passagens(passagens):
 
 #Essa função executa a compra de uma passagem, detalhe que o processo de compra envolve mais do que só essa função, as etapas
 #desse processo são determinadas no cliente.
-def comprar_passagem(userID, rotaID, rotas, passagens, usuarios):
-    for rota in rotas:
-        if rota['ID'] == rotaID:
-            print("rota encontrada")
-            if rota['assentos_disponiveis'] > 0:
-                print("tem assentos disponiveis")
-                cont = contar_passagens(passagens)
-                print(f"\n\nAs informações para criar a passagem: {cont}, {userID}\n\n")
-                nova_passagem = {
-                    "id_passagem": cont,
-                    "cliente_id": userID,
-                    "rota": rota['trecho'],
-                    "estaCancelado": False
-                }
-                print(f"foi criada: {nova_passagem}")
-                passagens.append(nova_passagem)
+def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuarios):
+    # for rota in rotas:
+    #     if rota['ID'] == rotaID:
+    #         print("rota encontrada")
+    #         if rota['assentos_disponiveis'] > 0:
+    #             print("tem assentos disponiveis")
+    #             cont = contar_passagens(passagens)
+    #             print(f"\n\nAs informações para criar a passagem: {cont}, {userID}\n\n")
+    #             nova_passagem = {
+    #                 "id_passagem": cont,
+    #                 "cliente_id": userID,
+    #                 "rota": rota['trecho'],
+    #                 "estaCancelado": False
+    #             }
+    #             print(f"foi criada: {nova_passagem}")
+    #             passagens.append(nova_passagem)
+    #
+    #             for user in usuarios:
+    #                 if user['id'] == userID:
+    #                     array = user['passagens']
+    #                     array.append(nova_passagem)
+    #
+    #             rota['assentos_disponiveis'] -= 1
+    #             with mutex:
+    #                 atualizar_rotas(rotas)
+    #                 atualizar_passagens(passagens)
+    #                 atualizar_usuarios(usuarios) 
+    #
+    #             return "Passagem criada com sucesso"
+    #         else:
+    #             return "Sem assentos disponíveis"
+    # return "Rota não encontrada"
 
-                for user in usuarios:
-                    if user['id'] == userID:
-                        array = user['passagens']
-                        array.append(nova_passagem)
-
-                rota['assentos_disponiveis'] -= 1
+    rotas_sem_vagas = []
+    passagens_para_registrar = []
+    for rota_compra in rotas_a_serem_compradas:
+        for rota_no_BD in rotas:
+            if rota_compra == rota_no_BD['ID']:
+                print(f"rota com ID:{rota_compra} encontrada.")
                 with mutex:
-                    atualizar_rotas(rotas)
-                    atualizar_passagens(passagens)
-                    atualizar_usuarios(usuarios) 
+                    if rota_no_BD['assentos_disponiveis'] > 0:
+                        print(f"há assentos disponiveis na rota {rota_compra}.")
+                        cont = contar_passagens(passagens)
+                        print(f"As informações para a compra são: ID:{cont}, usuario:{userID}, rota:{rota_no_BD['trecho']}")
+                        nova_passagem = {
+                            "id_passagem": cont,
+                            "cliente_id": userID,
+                            "rota": rota_no_BD['trecho'],
+                            "estaCancelado": False
+                        }
+                        print(f"Foi criada a passagem {nova_passagem['id_passagem']}.")
+                        passagens_para_registrar.append(nova_passagem)
+                        rota_no_BD['assentos_disponiveis'] -= 1
+                        atualizar_rotas(rotas)
+                    else:
+                        rotas_sem_vagas.append(rota_no_BD)
+    if len(rotas_sem_vagas) == 0:
+        with mutex:
+            for p in passagens_para_registrar:
+                passagens.append(p)
+                for u in usuarios:
+                    if p['cliente_id'] == u['id']:
+                        historico = u['passagens']
+                        historico.append(p)
+            atualizar_passagens(passagens)
+            atualizar_usuarios(usuarios) 
+        return 'Compra realizada'
 
-                return "Passagem criada com sucesso"
-            else:
-                return "Sem assentos disponíveis"
-    return "Rota não encontrada"
+    elif len(rotas_sem_vagas) == len(rotas_a_serem_compradas):
+        return 'Acabaram as vagas'
+    else:
+        with mutex:
+            for p in passagens_para_registrar:
+                for r in rotas:
+                    if p['rota'] == r['trecho']:
+                        r['assentos_disponiveis'] += 1
+            atualizar_rotas(rotas)
+        return rotas_sem_vagas
+                    
+
 
 #Função que busca as passagens de um dado usuário e retorna todas que não estejam marcadas como canceladas.
 def buscar_passagens_de_usuario(userID, usuarios):
@@ -181,7 +229,7 @@ def tratar_cliente(conexao_servidor, usuarios, passagens, rotas):
             elif opcode == 2:
                 resultado = mostrar_rotas(rotas)
             elif opcode == 3:
-                resultado = comprar_passagem(conteudo['cliente_id'], conteudo['rotaID'], rotas, passagens, usuarios)
+                resultado = comprar_passagem(conteudo['cliente_id'], conteudo['rotas_a_serem_compradas'], rotas, passagens, usuarios)
             elif opcode == 4:
                 resultado = buscar_passagens_de_usuario(conteudo['cliente_id'], usuarios)
             elif opcode == 5:

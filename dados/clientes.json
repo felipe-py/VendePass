@@ -116,6 +116,24 @@
                 "cliente_id": "1",
                 "rota": "Fortaleza -> Natal",
                 "estaCancelado": 1
+            },
+            {
+                "id_passagem": 31,
+                "cliente_id": "1",
+                "rota": "Natal -> Teresina",
+                "estaCancelado": 1
+            },
+            {
+                "id_passagem": 32,
+                "cliente_id": "1",
+                "rota": "Salvador -> Recife",
+                "estaCancelado": false
+            },
+            {
+                "id_passagem": 32,
+                "cliente_id": "1",
+                "rota": "Recife -> Fortaleza",
+                "estaCancelado": false
             }
         ]
     },

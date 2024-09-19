@@ -178,5 +178,11 @@
         "cliente_id": "1",
         "rota": "Fortaleza -> Natal",
         "estaCancelado": 1
+    },
+    {
+        "id_passagem": 31,
+        "cliente_id": "1",
+        "rota": "Natal -> Teresina",
+        "estaCancelado": 1
     }
 ]
