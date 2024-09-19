@@ -116,17 +116,20 @@ def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuario
 
     rotas_sem_vagas = []
     passagens_para_registrar = []
+    
     for rota_compra in rotas_a_serem_compradas:
         for rota_no_BD in rotas:
             if rota_compra == rota_no_BD['ID']:
-                print(f"rota com ID:{rota_compra} encontrada.")
+                print(f"Rota com ID:{rota_compra} encontrada.")
                 with mutex:
                     if rota_no_BD['assentos_disponiveis'] > 0:
-                        print(f"há assentos disponiveis na rota {rota_compra}.")
+                        print(f"Há assentos disponíveis na rota {rota_compra}.")
+                        # Atualiza o contador a cada nova passagem
                         cont = contar_passagens(passagens)
-                        print(f"As informações para a compra são: ID:{cont}, usuario:{userID}, rota:{rota_no_BD['trecho']}")
+                        contar_novamente = cont + len(passagens_para_registrar)  
+                        print(f"As informações para a compra são: ID:{contar_novamente}, usuario:{userID}, rota:{rota_no_BD['trecho']}")
                         nova_passagem = {
-                            "id_passagem": cont,
+                            "id_passagem": contar_novamente, 
                             "cliente_id": userID,
                             "rota": rota_no_BD['trecho'],
                             "estaCancelado": False
@@ -137,6 +140,7 @@ def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuario
                         atualizar_rotas(rotas)
                     else:
                         rotas_sem_vagas.append(rota_no_BD)
+
     if len(rotas_sem_vagas) == 0:
         with mutex:
             for p in passagens_para_registrar:
@@ -158,8 +162,7 @@ def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuario
                     if p['rota'] == r['trecho']:
                         r['assentos_disponiveis'] += 1
             atualizar_rotas(rotas)
-        return rotas_sem_vagas
-                    
+        return rotas_sem_vagas                   
 
 
 #Função que busca as passagens de um dado usuário e retorna todas que não estejam marcadas como canceladas.
