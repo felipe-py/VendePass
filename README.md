@@ -25,6 +25,7 @@ O protocolo de comunicação do projeto possui como base principal os subsistema
 <div id="sumario">
 	<ul>
         <li><a href="#Software"> Softwares Utilizadas </a></li>
+        <li><a href="#arquitetura"> Arquitetura do Projeto </a></li>
         <li><a href="#conclusao"> Conclusão </a></li>
         <li><a href="#execucaoProjeto"> Execução do Projeto </a></li>
         <li><a href="#referencias"> Referências </a></li>
@@ -56,6 +57,15 @@ O Visual Studio Code, também conhecido como *VSCode*, é um ambiente de desenvo
 </div>
 </div>
 
+</div id="arquitetura">
+<h2> Arquitetura do Projeto </h2>
+<div align="justify">
+
+Nesta seção, serão destacados os pricnipais pontos que envolvem a arquitetura do software desenvolvido, o que engloba todas as funções e regras de negócio que estão relacionadas a comunicação entre o cliente e o servidor.
+
+<h3> Cliente </h3>
+
+Toda a abordagem relacionada ao desenvolvimento das funcionalidades do cliente
 
 <div id="conclusao">
 <h2> Conclusão</h2>
