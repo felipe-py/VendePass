@@ -64,17 +64,55 @@ def mostrar_rotas(s1):
 #Essa função realiza a compra de passagens, ela chama 'mostrar_rotas' para que o usuário possa ver as rotas disponíveis
 #antes de realizar a compra, o tratamento de solicitações improprias se dá no servidor.
 def comprar_passagem(s1, user):
+    rotas_a_serem_compradas= []
     mostrar_rotas(s1)
-    rotaID = input("\nInsira o ID da rota desejada: ")
+    # rotaID = input("\nInsira o ID da rota desejada: ")
+    # rotas_a_serem_compradas.append(rotaID)
+
+    # mais_rotas = input("\nGostaria de comprar mais uma rota?[y/N]\n: ")
+    mais_rotas = 's'
+    while mais_rotas.lower() == 'y' or mais_rotas.lower() == 's':
+        rotaID = input("\nInsira o ID da rota desejada: ")
+        rotas_a_serem_compradas.append(rotaID)
+        mais_rotas = input("\nGostaria de comprar mais uma rota?[y/N]\n: ")
 
     mensagem = {
         'cliente_id': user,
-        'rotaID': rotaID
+        #'rotaID': rotaID
+        'rotas_a_serem_compradas': rotas_a_serem_compradas
     }
 
     resposta = enviar_dados(s1, 3, mensagem)
-    print(f"{resposta}\n")
+
+    while (resposta != 'Compra realizada' and resposta != 'Acabaram as vagas') :
+        print("Os seguintes trechos não tem mais vagas disponíveis:\n")
+        for elemento in resposta:
+            # print(f"Trecho: {elemento['rota']}") # Em caso de retornar passagem
+            print(f"Trecho: {elemento['trecho']}") # Em caso de retornar rota
+
+        seguir = input("\nAinda deseja seguir com a compra?[y/N]\n: ")
+        if seguir.lower() == 's' or seguir.lower() == 'y':
+            for i in resposta:
+                if i['ID'] in rotas_a_serem_compradas:
+                    j = i['ID']
+                    rotas_a_serem_compradas.remove(j)
+            mensagem = {
+                'cliente_id': user,
+                'rotas_a_serem_compradas': rotas_a_serem_compradas
+            }
+            resposta = enviar_dados(s1, 3, mensagem)
+        elif seguir.lower() == 'n':
+            print("A compra não foi realizada.")
+            break
+
+    if resposta == 'Compra realizada':
+        print("\nCompra realizada com sucesso.")
+    elif resposta == 'Acabaram as vagas':
+        print("\nAs vagas acabaram.")
+
+    #print(f"{resposta}\n")
     espacos()
+    return
 
 #Similar a 'mostrar_rotas', mas mostrando as passagens que tem 'user' como comprador.
 def mostrar_passagens(s1, user):
