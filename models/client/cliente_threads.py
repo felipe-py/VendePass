@@ -1,11 +1,9 @@
 import socket
 import json
 
-HOST = '127.0.0.1'
-PORT = 65432
 
 #Função para criar um socket e iniciar a conexão com o servidor usando o TCP/IP4.
-def conectar():
+def conectar(HOST, PORT):
     s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s1.connect((HOST, PORT))
     return s1
@@ -22,9 +20,18 @@ def enviar_dados(s1, opcode, dados):
         "dados": dados
     }
     s1.sendall(json.dumps(mensagem).encode())
-    resposta = s1.recv(1024).decode()
-    return json.loads(resposta)
 
+    # Recebe a resposta do servidor, lidando com mensagens fracionadas
+    partes = []
+    while True:
+        parte = s1.recv(1024).decode()
+        partes.append(parte)
+        if len(parte) < 1024:
+            break
+
+    # Junta todas as partes recebidas em uma única string
+    resposta = ''.join(partes)
+    return json.loads(resposta)
 #Essa função só manda uma mensagem antes de desconectar.
 def logout(s1):
     print("Adeus")
@@ -37,7 +44,8 @@ def login(s1):
     id = input("Digite seu ID: ")
     if id == "SAIR":
         espacos()
-        logout(s1)
+        # logout(s1)
+        return "sair"
     else:
         senha = input("Digite sua senha: ")
         credenciais ={
@@ -74,6 +82,7 @@ def comprar_passagem(s1, user):
     while mais_rotas.lower() == 'y' or mais_rotas.lower() == 's':
         rotaID = input("\nInsira o ID da rota desejada: ")
         rotas_a_serem_compradas.append(rotaID)
+        espacos()
         mais_rotas = input("\nGostaria de comprar mais uma rota?[y/N]\n: ")
 
     mensagem = {
@@ -85,6 +94,7 @@ def comprar_passagem(s1, user):
     resposta = enviar_dados(s1, 3, mensagem)
 
     while (resposta != 'Compra realizada' and resposta != 'Acabaram as vagas') :
+        espacos()
         print("Os seguintes trechos não tem mais vagas disponíveis:\n")
         for elemento in resposta:
             # print(f"Trecho: {elemento['rota']}") # Em caso de retornar passagem
@@ -102,12 +112,15 @@ def comprar_passagem(s1, user):
             }
             resposta = enviar_dados(s1, 3, mensagem)
         elif seguir.lower() == 'n':
+            espacos()
             print("A compra não foi realizada.")
             break
 
     if resposta == 'Compra realizada':
+        espacos()
         print("\nCompra realizada com sucesso.")
     elif resposta == 'Acabaram as vagas':
+        espacos()
         print("\nAs vagas acabaram.")
 
     #print(f"{resposta}\n")
@@ -140,6 +153,7 @@ def espacos():
 #Menu do programa, fica rodando contínuamente para que depois de um operação o usuário possa realizar outras sem ter que logar novamente.
 def menu(s1, user):
     while True:
+        print(f"Bem vindo(a) {user}, o que gostaria de fazer?\n\n")
         print("1. Comprar uma passagem")
         print("2. Cancelar uma compra")
         print("3. Sair")

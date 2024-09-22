@@ -146,6 +146,12 @@
                 "cliente_id": "1",
                 "rota": "Salvador -> Recife",
                 "estaCancelado": false
+            },
+            {
+                "id_passagem": 55,
+                "cliente_id": "1",
+                "rota": "Recife -> Fortaleza",
+                "estaCancelado": 1
             }
         ]
     },

@@ -4,14 +4,20 @@ import struct
 import json
 import os
 from pathlib import Path
-# from models.client import Cliente
 
-#Criados os 2 MUTEX que irão controlar as operações de compra e cancelamento.
+#Criados o MUTEX que irá controlar as operações de compra e cancelamento.
 mutex = threading.Lock()
 
 #Definição de diretórios para facilitar outras funções.
 diretorio_do_servidor = Path(__file__).parent
 diretorio_dos_BD = diretorio_do_servidor.parent.parent / 'dados'
+
+#Função para fracionar respostas muito grandes em pedaços menores.
+def enviar_resposta(conexao_servidor, resposta):
+    resposta_json = json.dumps(resposta)
+    # Fracione a mensagem em pedaços de 1024 bytes
+    for i in range(0, len(resposta_json), 1024):
+        conexao_servidor.sendall(resposta_json[i:i + 1024].encode())
 
 #Função para carregar dados de forma genérica
 def carregar_dados(arquivo):
@@ -82,38 +88,6 @@ def contar_passagens(passagens):
 #Essa função executa a compra de uma passagem, detalhe que o processo de compra envolve mais do que só essa função, as etapas
 #desse processo são determinadas no cliente.
 def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuarios):
-    # for rota in rotas:
-    #     if rota['ID'] == rotaID:
-    #         print("rota encontrada")
-    #         if rota['assentos_disponiveis'] > 0:
-    #             print("tem assentos disponiveis")
-    #             cont = contar_passagens(passagens)
-    #             print(f"\n\nAs informações para criar a passagem: {cont}, {userID}\n\n")
-    #             nova_passagem = {
-    #                 "id_passagem": cont,
-    #                 "cliente_id": userID,
-    #                 "rota": rota['trecho'],
-    #                 "estaCancelado": False
-    #             }
-    #             print(f"foi criada: {nova_passagem}")
-    #             passagens.append(nova_passagem)
-    #
-    #             for user in usuarios:
-    #                 if user['id'] == userID:
-    #                     array = user['passagens']
-    #                     array.append(nova_passagem)
-    #
-    #             rota['assentos_disponiveis'] -= 1
-    #             with mutex:
-    #                 atualizar_rotas(rotas)
-    #                 atualizar_passagens(passagens)
-    #                 atualizar_usuarios(usuarios) 
-    #
-    #             return "Passagem criada com sucesso"
-    #         else:
-    #             return "Sem assentos disponíveis"
-    # return "Rota não encontrada"
-
     rotas_sem_vagas = []
     passagens_para_registrar = []
     
@@ -240,7 +214,8 @@ def tratar_cliente(conexao_servidor, usuarios, passagens, rotas):
             else:
                 resultado = "Operação inválida"
 
-            conexao_servidor.sendall(json.dumps(resultado).encode())
+            # conexao_servidor.sendall(json.dumps(resultado).encode())
+            enviar_resposta(conexao_servidor, resultado)
     except Exception as e:
         print(f"Erro ao tratar cliente: {e}")
     finally:
@@ -249,7 +224,7 @@ def tratar_cliente(conexao_servidor, usuarios, passagens, rotas):
 # Essa função mantém o servidor ativo e conectado no endereço, ela também cria novas threads para conexões (até 8)
 # e carrega os BD que serão usados nas funções.
 def main():
-    IP_SERVIDOR = '127.0.0.1'
+    IP_SERVIDOR = '0.0.0.0'
     PORTA_SERVIDOR = 65432
 
     servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -261,7 +236,7 @@ def main():
     usuarios = carregar_usuarios()
     passagens = carregar_passagens()
 
-    print("Servidor escutando...")
+    print(f"Servidor conectado em {IP_SERVIDOR} na porta {PORTA_SERVIDOR}...")
 
     while True:
         conexao_servidor, endereco_cliente = servidor.accept()
