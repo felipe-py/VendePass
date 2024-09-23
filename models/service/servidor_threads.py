@@ -5,21 +5,21 @@ import json
 import os
 from pathlib import Path
 
-#Criados o MUTEX que irá controlar as operações de compra e cancelamento.
+# Criado o MUTEX que irá controlar as operações em zonas críticas (na prática as alterações no BD).
 mutex = threading.Lock()
 
-#Definição de diretórios para facilitar outras funções.
+# Definição de diretórios para facilitar outras funções.
 diretorio_do_servidor = Path(__file__).parent
 diretorio_dos_BD = diretorio_do_servidor.parent.parent / 'dados'
 
-#Função para fracionar respostas muito grandes em pedaços menores.
+# Função para fracionar respostas muito grandes em pedaços menores.
 def enviar_resposta(conexao_servidor, resposta):
     resposta_json = json.dumps(resposta)
     # Fracione a mensagem em pedaços de 1024 bytes
     for i in range(0, len(resposta_json), 1024):
         conexao_servidor.sendall(resposta_json[i:i + 1024].encode())
 
-#Função para carregar dados de forma genérica
+# Função para carregar dados de forma genérica
 def carregar_dados(arquivo):
     try:
         with open(arquivo, 'r') as f:
@@ -30,7 +30,7 @@ def carregar_dados(arquivo):
         print(f"Erro ao decodificar JSON: {e}")
     return None
 
-#Função para salvar dados de forma genérica
+# Função para salvar dados de forma genérica
 def salvar_dados(arquivo, BD):
     try:
         with open(arquivo, 'w') as arquivo:
@@ -38,7 +38,7 @@ def salvar_dados(arquivo, BD):
     except Exception as e:
         print(f"Erro ao salvar dados: {e}")
 
-#Funções específicas para carregar as rotas, passagens e usuarios. Elas rotornam seus respectivos Bancos de Dados(BD)
+# Funções específicas para carregar as rotas, passagens e usuarios. Elas rotornam seus respectivos Bancos de Dados(BD)
 def carregar_rotas():
     diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas.json')
     return carregar_dados(diretorio_das_rotas)
@@ -53,8 +53,8 @@ def carregar_usuarios():
     diretorio_dos_usuarios = os.path.join(diretorio_dos_BD, 'clientes.json')
     return carregar_dados(diretorio_dos_usuarios)
 
-#Funções para atualizar os bancos de dados. Elas recebem um BD que foi editado(como 'rotas') e chama a função
-#'salvar_dados' para realizar o dump no arquivo correto.
+# Funções para atualizar os bancos de dados. Elas recebem um BD que foi editado(como 'rotas') e chama a função
+# 'salvar_dados' para realizar o dump no arquivo correto.
 def atualizar_rotas(rotas):
     diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas.json')
     salvar_dados(diretorio_das_rotas, rotas)
@@ -68,8 +68,8 @@ def atualizar_usuarios(usuarios):
     diretorio_dos_usuarios = os.path.join(diretorio_dos_BD, 'clientes.json')
     salvar_dados(diretorio_dos_usuarios, usuarios)
 
-#Função para realizar o login, ela recebe o ID e a senha e compara a um usuário do BD 'clientes' e retorna uma mensagem
-#que vai ser interpretada no cliente como uma autorização (ou não) para prosseguir com o menu
+# Função para realizar o login, ela recebe o ID e a senha e compara a um usuário do BD 'clientes' e retorna uma mensagem
+# que vai ser interpretada no cliente como uma autorização (ou não) para prosseguir com o menu
 def logar(id, senha, usuarios):
     if usuarios is None:
         print("A lista de usuarios esta vazia")
@@ -78,22 +78,23 @@ def logar(id, senha, usuarios):
             return "Logado com sucesso"
     return "Login falhou"
 
-#Função para contar o numero de passagens já criadas, importante para determinar o ID de uma nova passagem a ser gerada
+# Função para contar o numero de passagens já criadas, importante para determinar o ID de uma nova passagem a ser gerada
 def contar_passagens(passagens):
     contador = 1
     for passagem in passagens:
         contador +=1
     return contador
 
-#Essa função executa a compra de uma passagem, detalhe que o processo de compra envolve mais do que só essa função, as etapas
-#desse processo são determinadas no cliente.
+# Essa função executa a compra de uma passagem, detalhe que o processo de compra envolve mais do que só essa função, as etapas
+# desse processo são determinadas no cliente.
 def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuarios):
+    # Primeiro são criados os vetores que irão guardar as rotas sem vagas e as passagens criadas,
+    # porém ainda não escritas no BD
     rotas_sem_vagas = []
     passagens_para_registrar = []
-    for elemento in rotas_a_serem_compradas:
-        if int(elemento) == 0:
-            return 'Saindo para o menu'
     
+    # Dois loops aninhados para encontrar a rota buscada, depois de encontrada será verificada
+    # se ainda há assentos disponiveis (ja com o MUTEX) e então será feita a passagem
     for rota_compra in rotas_a_serem_compradas:
         for rota_no_BD in rotas:
             if rota_compra == rota_no_BD['ID']:
@@ -101,10 +102,12 @@ def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuario
                 with mutex:
                     if rota_no_BD['assentos_disponiveis'] > 0:
                         print(f"Há assentos disponíveis na rota {rota_compra}.")
-                        # Atualiza o contador a cada nova passagem
+                        # Atualiza o contador a cada nova passagem para usar no ID
                         cont = contar_passagens(passagens)
                         contar_novamente = cont + len(passagens_para_registrar)  
                         print(f"As informações para a compra são: ID:{contar_novamente}, usuario:{userID}, rota:{rota_no_BD['trecho']}")
+                        # Apesar da passagem ser criada aqui ela ainda não foi salva em arquivo, 
+                        # ela está sendo guardada no vetor "passagens_para_registrar"
                         nova_passagem = {
                             "id_passagem": contar_novamente, 
                             "cliente_id": userID,
@@ -113,12 +116,22 @@ def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuario
                         }
                         print(f"Foi criada a passagem {nova_passagem['id_passagem']}.")
                         passagens_para_registrar.append(nova_passagem)
+                        # Aqui a rota já é alterada no BD, o motivo do BD de rotas ser atualizado
+                        # e o BD das passagens não é que o BD de rotas é 'investigado' em busca
+                        # de assentos diponíveis, então ele precisa ser atualizado a cada operação
+                        # contudo para as passagens isso apenas adicionaria um procedimento que
+                        # talvez precisasse ser desfeito a depender se as outras rotas teriam vagas
+                        # ou não desperdiçando processamento.
                         rota_no_BD['assentos_disponiveis'] -= 1
                         atualizar_rotas(rotas)
                     else:
+                        # Caso não haja vagas a rota vai ser guardada para um return
                         rotas_sem_vagas.append(rota_no_BD)
-
+    # Caso todas as rotas tenham vagas as passagens guardadas no vetor são escritas nos BD de passagens
+    # e usuarios
     if len(rotas_sem_vagas) == 0:
+        # Operações que envolvem a escrita de dados precisam ser controladas pelo MUTEX para evitar
+        # condições de corrida
         with mutex:
             for p in passagens_para_registrar:
                 passagens.append(p)
@@ -129,9 +142,15 @@ def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuario
             atualizar_passagens(passagens)
             atualizar_usuarios(usuarios) 
         return 'Compra realizada'
-
+    # Caso todas as rotas estejam sem vagas, não há sentido em 'continuar' qualquer operação, então
+    # so há o retorno
     elif len(rotas_sem_vagas) == len(rotas_a_serem_compradas):
         return 'Acabaram as vagas'
+    # Só entra nesse else se houveram um conjunto de rotas sem vagas menor do que o número de pedidos
+    # da compra, nesse caso o BD das rotas é atualizado para retornar as vagas (já que a compra não foi
+    # feita) sem vagas, detalhe que o usuário pode escolher comprar as outras rotas, mas nesse caso o
+    # cliente realimentaria essa função com o conjunto de rotas "original" sem as rotas que foram removidas
+    # pela ausencia de vagas
     else:
         with mutex:
             for p in passagens_para_registrar:
@@ -142,7 +161,7 @@ def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuario
         return rotas_sem_vagas                   
 
 
-#Função que busca as passagens de um dado usuário e retorna todas que não estejam marcadas como canceladas.
+# Função que busca as passagens de um dado usuário e retorna todas que não estejam marcadas como canceladas.
 def buscar_passagens_de_usuario(userID, usuarios):
     passagens_validas = []
     for user in usuarios:
@@ -155,9 +174,9 @@ def buscar_passagens_de_usuario(userID, usuarios):
             return passagens_validas
     return None
 
-#Função que cancela uma passagem, para todos os propósitos a requerida passagem não existe mais, contudo
-#o registro dela permanece no BD das passagens e nas passagens do usuário no BD dos clientes, porém marcado
-#como passagem cancelada.
+# Função que cancela uma passagem, para todos os propósitos a requerida passagem não existe mais, contudo
+# o registro dela permanece no BD das passagens e nas passagens do usuário no BD dos clientes, porém marcado
+# como passagem cancelada.
 def cancelar_passagem(passagemID, userID, passagens, usuarios):
     if int(passagemID) == 0:
         print("cancelamento cancelado")
@@ -184,7 +203,7 @@ def cancelar_passagem(passagemID, userID, passagens, usuarios):
                 return "A passagem ja foi cancelada"
     return "Passagem não encontrada."
 
-#Função para mostrar as rotas disponíveis para compra a partir da solicitação do cliente
+# Função para mostrar as rotas disponíveis para compra a partir da solicitação do cliente
 def mostrar_rotas(rotas):
     rotas_disponiveis = []
     for rota in rotas:
@@ -195,8 +214,8 @@ def mostrar_rotas(rotas):
         print(f"{r['trecho']}")
     return rotas_disponiveis
 
-#Essa função interpreta a solicitação feita para o servidor, ela separa o 'opcode' da mensagem, seleciona
-#a função a ser executada e envia os argumentos para sua execução.
+# Essa função interpreta a solicitação feita para o servidor, ela separa o 'opcode' da mensagem, seleciona
+# a função a ser executada e envia os argumentos para sua execução.
 def tratar_cliente(conexao_servidor, usuarios, passagens, rotas):
     try:
         while True:
@@ -211,22 +230,30 @@ def tratar_cliente(conexao_servidor, usuarios, passagens, rotas):
             print(f"os dados enviados foram {conteudo}")
             if opcode == 1: 
                 resultado = logar(conteudo['id'], conteudo['senha'], usuarios)
+                print(f"A resposta enviada ao cliente foi: {resultado}.")
             elif opcode == 2:
                 resultado = mostrar_rotas(rotas)
+                print(f"A resposta enviada ao cliente foi: {resultado}.")
             elif opcode == 3:
                 resultado = comprar_passagem(conteudo['cliente_id'], conteudo['rotas_a_serem_compradas'], rotas, passagens, usuarios)
+                print(f"A resposta enviada ao cliente foi: {resultado}.")
             elif opcode == 4:
                 resultado = buscar_passagens_de_usuario(conteudo['cliente_id'], usuarios)
+                print(f"A resposta enviada ao cliente foi: {resultado}.")
             elif opcode == 5:
                 resultado = cancelar_passagem(conteudo['id_passagem'], conteudo['userID'], passagens, usuarios)
+                print(f"A resposta enviada ao cliente foi: {resultado}.")
             else:
                 resultado = "Operação inválida"
+                print(f"A resposta enviada ao cliente foi: {resultado}.")
 
             # conexao_servidor.sendall(json.dumps(resultado).encode())
             enviar_resposta(conexao_servidor, resultado)
+            print("Mensagem enviada com sucesso.")
     except Exception as e:
         print(f"Erro ao tratar cliente: {e}")
     finally:
+        print("Conexão encerrada.")
         conexao_servidor.close()
 
 # Essa função mantém o servidor ativo e conectado no endereço, ela também cria novas threads para conexões (até 8)
@@ -239,10 +266,14 @@ def main():
     servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     servidor.bind((IP_SERVIDOR, PORTA_SERVIDOR))
     servidor.listen(8)
+    print(f"criado o socket\nIP: {IP_SERVIDOR}\nPorta: {PORTA_SERVIDOR}")
 
     rotas = carregar_rotas()
+    print("carregado o BD de rotas")
     usuarios = carregar_usuarios()
+    print("carregado o BD de usuarios")
     passagens = carregar_passagens()
+    print("carregado o BD de passagens")
 
     print(f"Servidor conectado em {IP_SERVIDOR} na porta {PORTA_SERVIDOR}...")
 
