@@ -123,7 +123,13 @@ Os arquivos *cliente_threads.py* e *servidor_threads.py* são também responsáv
 
 Em *servidor_threads.py* as informações enviadas pelo usuário em cada uma das funções citadas acima serão decodificadas e manipularemos os dados necessários para executa-las corretamente.
 
+Todos os dados relacionados ao projeto são armazenados em arquivos do tipo JSON, estes são atualizados em tempo real pelo servidor através de funções de carregamento e atualização. Mensagens são exibidas no terminal de execução do servidor para garantir o correto funcionamento das funções a serem utilizadas.
 
+[EM CONSTRUÇÃO]
+
+<h3> Escabilidade e Concorrência </h3>
+
+[EM CONSTRUÇÃO]
 
 <div id="conclusao">
 <h2> Conclusão</h2>
