@@ -90,6 +90,9 @@ def contar_passagens(passagens):
 def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuarios):
     rotas_sem_vagas = []
     passagens_para_registrar = []
+    for elemento in rotas_a_serem_compradas:
+        if int(elemento) == 0:
+            return 'Saindo para o menu'
     
     for rota_compra in rotas_a_serem_compradas:
         for rota_no_BD in rotas:
@@ -156,12 +159,17 @@ def buscar_passagens_de_usuario(userID, usuarios):
 #o registro dela permanece no BD das passagens e nas passagens do usuário no BD dos clientes, porém marcado
 #como passagem cancelada.
 def cancelar_passagem(passagemID, userID, passagens, usuarios):
-    # with mutex_cancelamento:
-    print("carregou o BD")
+    if int(passagemID) == 0:
+        print("cancelamento cancelado")
+        return "Voltando para o menu"
     for passagem in passagens:
         if passagem['id_passagem'] == int(passagemID):
             print("A passagem foi encontrada.")
+            if passagem['cliente_id'] != userID:
+                print("Passagem de outro usuario")
+                return f"Essa passagem pertence ao usuario {passagem['cliente_id']}."
             if passagem['estaCancelado'] != 1:
+                print(f"o cliente na passagem eh: {passagem['cliente_id']}\no userID eh: {userID}")
                 passagem['estaCancelado'] = 1
                 for user in usuarios:
                     if user['id'] == userID:
@@ -173,7 +181,7 @@ def cancelar_passagem(passagemID, userID, passagens, usuarios):
                     atualizar_usuarios(usuarios)
                 return "Passagem cancelada com sucesso."
             else:
-                return "Essa passagem já foi cancelada"
+                return "A passagem ja foi cancelada"
     return "Passagem não encontrada."
 
 #Função para mostrar as rotas disponíveis para compra a partir da solicitação do cliente

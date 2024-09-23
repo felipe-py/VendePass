@@ -80,7 +80,10 @@ def comprar_passagem(s1, user):
     # mais_rotas = input("\nGostaria de comprar mais uma rota?[y/N]\n: ")
     mais_rotas = 's'
     while mais_rotas.lower() == 'y' or mais_rotas.lower() == 's':
-        rotaID = input("\nInsira o ID da rota desejada: ")
+        rotaID = input("\nInsira o ID da rota desejada ou pressione '0' para cancelar a operação: ")
+        if int(rotaID) == 0:
+            print("retornando ao menu")
+            return
         rotas_a_serem_compradas.append(rotaID)
         espacos()
         mais_rotas = input("\nGostaria de comprar mais uma rota?[y/N]\n: ")
@@ -123,11 +126,6 @@ def comprar_passagem(s1, user):
         espacos()
         print("\nAs vagas acabaram.")
 
-    #print(f"{resposta}\n")
-    espacos()
-    return
-
-#Similar a 'mostrar_rotas', mas mostrando as passagens que tem 'user' como comprador.
 def mostrar_passagens(s1, user):
     mensagem = {'cliente_id': user}
     passagens = enviar_dados(s1, 4, mensagem)
@@ -139,7 +137,7 @@ def mostrar_passagens(s1, user):
 #dois bancos de dado, e em um deles o objeto é encontrado a partir do usuário.
 def cancelar_compra(s1, user):
     mostrar_passagens(s1, user)
-    passagemID = input("\nInsira o ID da passagem: ")
+    passagemID = input("\nInsira o ID da passagem ou pressione '0' para cancelar a operação: ")
 
     mensagem = {'id_passagem': passagemID, 'userID': user}
     resposta = enviar_dados(s1, 5, mensagem)
