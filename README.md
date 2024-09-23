@@ -11,6 +11,8 @@ O protocolo de comunicação do projeto possui como base principal os subsistema
 - **Comunicação Cliente/Servidor:** Estabelecer a comunicação entre o cliente que busca e compra passagens e o servidor central da empresa áerea
 - **Concorrência e prioridade:** Garantir que o cliente que inicia o processo de compra de uma passagem tenha prioridade, não permitindo que um outro cliente tenha posse do assento.
 
+Desta forma, é necessário realizar o controle minuscioso de concorrência dentro da aplicação, além de garantir que não existam inconcistências durante a conexão.
+
 </div>
 </div>
 
@@ -26,7 +28,8 @@ O protocolo de comunicação do projeto possui como base principal os subsistema
 	<ul>
         <li><a href="#Software"> Softwares Utilizadas </a></li>
         <li><a href="#arquitetura"> Arquitetura do Projeto </a></li>
-        <li><a href="#conclusao"> Conclusão </a></li>
+        <li><a href="concorrencia"> Concorrência e Escabilidade </a></li>
+        <li><a href="#conclusao"> Considerações Finais </a></li>
         <li><a href="#execucaoProjeto"> Execução do Projeto </a></li>
         <li><a href="#referencias"> Referências </a></li>
 	</ul>	
@@ -81,6 +84,8 @@ O protocolo de comunicação de cada requisição que esteja de forma direta(log
 * opcode 4: Solicitação para visualização de passagens compradas
 * opcode 5: Solicitação para cancelar passagem comprada
 
+FLUXOGRAMA DE COMUNICAÇÃO AQUI
+
 <h4> Comunicação no Cliente </h4>
 
 No arquivo *cliente_threads.py* podemos ter acesso as funções do cliente que são utilizadas para a sua conexão e comunicação com o servidor, sendo elas: *conectar()*, *desconectar()* e *enviar_dados()*
@@ -125,15 +130,45 @@ Em *servidor_threads.py* as informações enviadas pelo usuário em cada uma das
 
 Todos os dados relacionados ao projeto são armazenados em arquivos do tipo JSON, estes são atualizados em tempo real pelo servidor através de funções de carregamento e atualização. Mensagens são exibidas no terminal de execução do servidor para garantir o correto funcionamento das funções a serem utilizadas.
 
-[EM CONSTRUÇÃO]
+O fluxograma abaixo (Figura 2), destaca o fluxo de interações entre o cliente e o servidor, com as responsabilidades de cada um.
 
-<h3> Escabilidade e Concorrência </h3>
+FLUXOGRAMA DE FLUXO DO SISTEMA AQUI
 
-[EM CONSTRUÇÃO]
+</div>
+</div>
+
+<div id="concorrencia">
+<h2> Concorrência e Escabilidade </h2>
+<div align="justify">
+
+Estratégias foram desenvolvidas para lidar com as questões relacionadas a concorrência, a utilização de threads e mutex foi a principal delas. Nesta seção, estas escolhas serão explicadas, assim como a sua relação com a escabilidade do projeto como um todo.
+
+<h4> Concorrência </h4>
+
+As threads são utilizadas para o tratamento de conexões simultâneas, ou seja, cada vez que um cliente é inicializado e conectado ao servidor ele será totalmente independenete. Isso permite que o servidor atenda vários clientes ao mesmo tempo, sendo que estes podem realizar as amsi diversas funções disponíveis.
+
+A principal vantagem na utilização de threas neste projeto, é devido a não necessidade de espera de um cliente para realizar seu objetivo no sistema, enquanto outro cliente esteja sendo atendido. Isso evita bloqueios desnecessários na rotina dos clientes, e não prejudica o desempenho de maneira significativa devido ao baixo número de requisições que podem ser realizadas por vez.
+
+Para prevenir uma situação de condição de corrida na compra ou cancelamento de uma passagem, é utilizado um mutex. Isso irá garantir que apenas uma thread tenha acesso a esta passagem, evitando que dois ou mais clientes comprem a mesma passagem e também que uma mesma passagem seja cancelada mais de uma vez.
+
+<h4> Escabilidade </h4>
+
+Os principais pontos que envolvem uma atividade prejudicial de escabilidade do software estão relacionados com a sua capacidade de suportar um grande número de clientes simultâneos, isso se deve principalmente a utilização das threads e a forma como o protocolo de comunicação é construído.
+
+Cada thread consome um nível significativo de recursos, e esta situação de dependência na qual cada cliente conectado é uma nova thread pode ocasionar em um esgotamento de memória.
+
+A utilização do JSON para armazenar os dados do sistema e o protocolo de comunicação é bastante simples, porém, se demonstra ineficaz quando estamos envolvendo uma situação onde milhares de clientes estejam conectados e o servidor precise manipular diveros dados ao mesmo tempo. Em casos de alta demanda, pode ocorrer lentidão no processamento dessas informações.
+
+</div>
+</div>
 
 <div id="conclusao">
-<h2> Conclusão</h2>
+<h2> Considerações finais</h2>
 <div align="justify">
+
+De maneira geral, diversas estratégias apresentadas anteriormente foram utilizadas para otimizar o desempenho e trazer confiabilidade para a aplicação. Entretanto, elas podem se demonstrar ineficientes principalmente em cenários de alta demanda.
+
+A utilização de filas para distribuição das threads criadas poderia de certa forma reduzir os custos de carga do sistema, por outro lado, a fragmentação da mensagem no momento de envio de requisições e respostas por parte do servidor/cliente, diminui o risco de um congestionamento na rede.
 
 
 </div>
