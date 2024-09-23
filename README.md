@@ -170,6 +170,8 @@ De maneira geral, diversas estratégias apresentadas anteriormente foram utiliza
 
 A utilização de filas para distribuição das threads criadas poderia de certa forma reduzir os custos de carga do sistema, por outro lado, a fragmentação da mensagem no momento de envio de requisições e respostas por parte do servidor/cliente, diminui o risco de um congestionamento na rede.
 
+O controle da concorrência pela passagem é garantido devido a utilização do mutex, o que aumenta significativamente a confiabilidade do sistema. A durabilidade do sistema é garantida pela persistência dos dados em arquivo JSON, este pode ser alterado para um banco de dados mais robusto, o que melhoraria o tempo de resposta ao manipular várias informações para diversas requisições simultâneas.
+
 
 </div>
 </div>
@@ -185,6 +187,8 @@ A utilização de filas para distribuição das threads criadas poderia de certa
 <div id="referencias">  
 <h2> Referências</h2>
 <div align="justify">
+
+
 
 </div>
 </div>
