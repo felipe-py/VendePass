@@ -17,7 +17,7 @@ Dessa forma, é necessário realizar o controle minucioso de concorrência dentr
 </div>
 </div>
 
-<h2> Autor <br></h2>
+<h2> Autores <br></h2>
 <uL>
   <li><a href="https://github.com/felipe-py">Felipe Silva</a></li>
   <li><a href="https://github.com/Lucas-L-Rodrigues">Lucas Lima</a></li>
