@@ -30,7 +30,7 @@ Desta forma, é necessário realizar o controle minuscioso de concorrência dent
         <li><a href="#arquitetura"> Arquitetura do Projeto </a></li>
         <li><a href="concorrencia"> Concorrência e Escabilidade </a></li>
         <li><a href="#conclusao"> Considerações Finais </a></li>
-        <li><a href="#execucaoProjeto"> Execução do Projeto </a></li>
+        <li><a href="#execucaoProjeto"> Execução do Projeto Com Docker</a></li>
         <li><a href="#referencias"> Referências </a></li>
 	</ul>	
 </div>
@@ -52,10 +52,6 @@ Um contêiner é uma unidade leve e portátil que inclui tudo o que um aplicativ
 para ser executado de forma independente, como código, bibliotecas, dependências e configurações.
 O Docker oferece uma plataforma consistente para desenvolver, testar e implantar aplicativos, 
 garantindo que os ambientes de desenvolvimento e produção sejam consistentes e reproduzíveis.
-
-<h3>VS Code</h3>
-
-O Visual Studio Code, também conhecido como *VSCode*, é um ambiente de desenvolvimento muito popular. Desenvolvido pela Microsoft, é um editor de código aberto e gratuito que oferece recursos como realce de sintaxe, conclusão automática de código e depuração integrada. Foi escolhido para o processo de desenvolvimento do software devido a variedade de extensões que facilitam o processo de programação com as ferramentas utilizadas.
 
 </div>
 </div>
@@ -126,13 +122,13 @@ Isto se faz necessário para manter a indentificação do cliente relacionada a 
 
 Os arquivos *cliente_threads.py* e *servidor_threads.py* são também responsáveis pelas funções de interface a ser exibida ao cliente e lógica da aplicação, respectivamente. Funções de login e logout, compra e cancelamento de passagens, assim como os menus e inputs a serem visualizados pelo usuário estão presentes em *cliente_threads.py*.
 
-Em *servidor_threads.py* as informações enviadas pelo usuário em cada uma das funções citadas acima serão decodificadas e manipularemos os dados necessários para executa-las corretamente.
+Diversas regras são aplicadas para que não existam inconcistências durante os processos realizados pelo cliente, inicialmente durante o processo de login é permitido por exemplo que o usuário erre sua senha com um número ilimitado de tentativas, entretanto, ele poderá sair a qualquer momento por desistência.
+
+O sistema não faz a exibição durante o momento de compra, dos trechos em não existam assentos dispníveis para a compra, importante salientar que esta informação é atualizada em tempo real para a confiabilidade do sistema durante multiplas conexões. O menu é controlado por um laço de repetição, o cliente após realizar cada açõa disponível que desejar será redirecionado para o menu principal.
+
+Em *servidor_threads.py* as informações enviadas pelo usuário em cada uma das funções citadas acima serão decodificadas e manipularemos os dados necessários para executa-las corretamente. Tratamento de exceções são feitos para abertura do banco de dados, isso é realizado para que o sistema não trave em caso de uma falha na busca dos arquivos.
 
 Todos os dados relacionados ao projeto são armazenados em arquivos do tipo JSON, estes são atualizados em tempo real pelo servidor através de funções de carregamento e atualização. Mensagens são exibidas no terminal de execução do servidor para garantir o correto funcionamento das funções a serem utilizadas.
-
-O fluxograma abaixo (Figura 2), destaca o fluxo de interações entre o cliente e o servidor, com as responsabilidades de cada um.
-
-FLUXOGRAMA DE FLUXO DO SISTEMA AQUI
 
 </div>
 </div>
@@ -177,9 +173,44 @@ O controle da concorrência pela passagem é garantido devido a utilização do 
 </div>
 
 <div id="execucaoProjeto">
-<h2> Execução do Projeto</h2>
+<h2> Execução do Projeto Com Docker</h2>
 <div align="justify">
 
+A tecnologia do docker permitiu um grande encapsulamento de execuções graças a implementação de recursos como contêineres, com ela é possível de se encapsular não somente os arquivos a serem executados, mas também instalar suas dependências de forma automática. Na prática, temos nossa aplicação rodando em um compartimento autossuficiente e isolado, e isso ajuda muito na consistência da experiência ao usar o produto. Contudo o uso dessa tecnologia traz algumas limitações complicadas, pois se cada execução pode rodar em um ambiente quase independente, como fazer para conectar 2 ou mais containers? A solução para essa questão vem na forma de uma “network”.
+
+Contêineres:
+
+Para criar o contêiner do servidor é necessário estar na pasta do aplicativo e então usar o seguinte comando:
+
+*sudo docker build -t vende_pass_server -f Dockerfile_server .*
+
+Em que “sudo” garante privilégios de superusuário necessários para a execução; “docker build” invoca o comando para criar um contêiner no Docker; “-t vende_pass_server” aplica a tag, ou o identificador que será usado para se referir a esse contêiner no futuro, como vende_pass_server; “-f Dockerfile_server” indica que o arquivo que será usado para criar o contêiner é o Dockerfile_server; e por fim “.” indica que o arquivo que vai ser usado para fazer o contêiner está no atual diretório (A depender do seu “working directory” o argumento pode ser diferente).
+ De forma similar ao contêiner do servidor temos que o contêiner do cliente é feito com os mesmos argumentos:
+
+ *sudo docker build -t vende_pass_cliente -f Dockerfile_cliente .*
+
+Apenas vale ressaltar que o nome do contêiner deve ser diferente e o arquivo que será usado para criar o contêiner também é outro.
+
+Network:
+
+ Uma network é um conceito autoexplicativo, ela é uma rede que entrelaça containers permitindo que uma execução seja “visível” e possa se conectar a outra como numa rede de fato. No projeto em questão foi contruída uma network(vende_pass_network) que envolverá os containers do servidor (vende_pass_server) e do cliente (vende_pass_cliente) permitindo que haja um comunicação estre eles. Para fazer uma network é usado o seguinte comando:
+
+*sudo docker network create vende_pass_network*
+
+ O comando é similar ao usado na criação dos contêiners, tendo como óbvia diferença o “network create” que indica a criação da network e a não necessidade de um arquivo para sua criação ou, nesse caso, de modificadores. O comando apenas cria uma rede, mas não específica o que será feito nela afinal. Importante destacar que como a conexão entre os operadores estará sendo realizada pela rede do Docker a presença ou não de uma conexão ativa com a internet não é estritamente necessária, caso a mesma seja interrompida durante a execução das aplicações não haverá perdas.
+
+Executando os contêineres na network:
+ 
+ Para executar a aplicação é necessário que o contêiner do servidor na rede seja executado primeiro, afinal é com ele quee o cliente se comunicará, para isso é usado o seguinte comando:
+
+*sudo docker run --rm --name servidor_container --network vende_pass_network -p 65432:65432 vende_pass_server*
+
+ Em que “docker run” executa o contêiner; “—rm” é usado para garantir que depois da execução o contêiner não continuará rodando em segundo plano (importante uma vez que o servidor não deve ocupar o endereço de IP enquanto estiver desligado); “—name servidor_container” indica o nome personalizado para aquele contêiner em execução; “--network vende_pass_network” indica que ele deve rodar na rede vende_pass_network; “-p 65432:65432” mapeia a porta 65432 da máquina real para a porta do contêiner; e por fim “vende_pass_server” se refere a imagem que vai ser usada naquele contêiner.
+ De forma similar ao servidor a execução do cliente é realizada pelo seguinte comando:
+
+*sudo docker run -it --rm --name cliente_container --network vende_pass_network vende_pass_cliente*
+
+Em que a única grande diferença é o argumento “-it” que permite a utilização de um terminal de forma interativa pelo contêiner
 
 </div>
 </div>
