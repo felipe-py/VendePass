@@ -27,34 +27,12 @@ Dessa forma, é necessário realizar o controle minucioso de concorrência dentr
 <h1 align="center"> Sumário </h1>
 <div id="sumario">
 	<ul>
-        <li><a href="#Software"> Softwares Utilizadas </a></li>
         <li><a href="#arquitetura"> Arquitetura do Projeto </a></li>
         <li><a href="concorrencia"> Concorrência e Escabilidade </a></li>
         <li><a href="#conclusao"> Considerações Finais </a></li>
         <li><a href="#execucaoProjeto"> Execução do Projeto Com Docker</a></li>
         <li><a href="#referencias"> Referências </a></li>
 	</ul>	
-</div>
-
-<div id="Software">
-<h2> Softwares Utilizadas</h2>
-<div align="justify">
-
-Nesta seção, são apresentados os softwares utilizados durante o desenvolvimento do projeto.
-
-<h3> Linguagem Python</h3>
-
-O *Python* foi escolhido para o desenvolvimento do projeto devido a sua sintaxe simplificada, além da grande integração com as mais diversas funções e bibliotecas disponíveis para elaboraração do software. A versão utilizada foi a 3.12.6.
-
-<h3> Docker</h3>
-
-O *Docker* é uma plataforma de implantação e execução de aplicativos em contêineres. 
-Um contêiner é uma unidade leve e portátil que inclui tudo o que um aplicativo precisa 
-para ser executado de forma independente, como código, bibliotecas, dependências e configurações.
-O Docker oferece uma plataforma consistente para desenvolver, testar e implantar aplicativos, 
-garantindo que os ambientes de desenvolvimento e produção sejam consistentes e reproduzíveis.
-
-</div>
 </div>
 
 </div id="arquitetura">
