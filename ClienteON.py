@@ -3,6 +3,7 @@ import json
 from models.client.cliente_utils import * 
 import time
 
+# O host antigo era 'servidor_container'
 HOST = ''
 PORT = 65432
 
