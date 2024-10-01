@@ -1,9 +1,9 @@
 import socket
 import json
-from models.client.cliente_threads import * 
+from models.client.cliente_utils import * 
 import time
 
-HOST = 'servidor_container'
+HOST = ''
 PORT = 65432
 
 def main():
@@ -34,5 +34,4 @@ def main():
     # if user:
     #     menu(s1, user)
 
-if __name__ == "__main__":
-    main()
+main()

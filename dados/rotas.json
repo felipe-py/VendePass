@@ -29,10 +29,10 @@
     },
     {
         "ID": "5",
-        "trecho": "Salvador -> São Paulo",
+        "trecho": "Salvador -> S\u00e3o Paulo",
         "assentos_disponiveis": 20,
         "cidadeSaida": "Salvador",
-        "cidadeChegada": "São Paulo"
+        "cidadeChegada": "S\u00e3o Paulo"
     },
     {
         "ID": "6",
@@ -92,10 +92,10 @@
     },
     {
         "ID": "14",
-        "trecho": "Recife -> São Paulo",
+        "trecho": "Recife -> S\u00e3o Paulo",
         "assentos_disponiveis": 20,
         "cidadeSaida": "Recife",
-        "cidadeChegada": "São Paulo"
+        "cidadeChegada": "S\u00e3o Paulo"
     },
     {
         "ID": "15",
@@ -155,10 +155,10 @@
     },
     {
         "ID": "23",
-        "trecho": "Fortaleza -> São Paulo",
+        "trecho": "Fortaleza -> S\u00e3o Paulo",
         "assentos_disponiveis": 20,
         "cidadeSaida": "Fortaleza",
-        "cidadeChegada": "São Paulo"
+        "cidadeChegada": "S\u00e3o Paulo"
     },
     {
         "ID": "24",
@@ -218,10 +218,10 @@
     },
     {
         "ID": "32",
-        "trecho": "Natal -> São Paulo",
+        "trecho": "Natal -> S\u00e3o Paulo",
         "assentos_disponiveis": 20,
         "cidadeSaida": "Natal",
-        "cidadeChegada": "São Paulo"
+        "cidadeChegada": "S\u00e3o Paulo"
     },
     {
         "ID": "33",
@@ -281,10 +281,10 @@
     },
     {
         "ID": "41",
-        "trecho": "Teresina -> São Paulo",
+        "trecho": "Teresina -> S\u00e3o Paulo",
         "assentos_disponiveis": 20,
         "cidadeSaida": "Teresina",
-        "cidadeChegada": "São Paulo"
+        "cidadeChegada": "S\u00e3o Paulo"
     },
     {
         "ID": "42",
@@ -316,65 +316,65 @@
     },
     {
         "ID": "46",
-        "trecho": "São Paulo -> Salvador",
+        "trecho": "S\u00e3o Paulo -> Salvador",
         "assentos_disponiveis": 20,
-        "cidadeSaida": "São Paulo",
+        "cidadeSaida": "S\u00e3o Paulo",
         "cidadeChegada": "Salvador"
     },
     {
         "ID": "47",
-        "trecho": "São Paulo -> Recife",
+        "trecho": "S\u00e3o Paulo -> Recife",
         "assentos_disponiveis": 20,
-        "cidadeSaida": "São Paulo",
+        "cidadeSaida": "S\u00e3o Paulo",
         "cidadeChegada": "Recife"
     },
     {
         "ID": "48",
-        "trecho": "São Paulo -> Fortaleza",
+        "trecho": "S\u00e3o Paulo -> Fortaleza",
         "assentos_disponiveis": 20,
-        "cidadeSaida": "São Paulo",
+        "cidadeSaida": "S\u00e3o Paulo",
         "cidadeChegada": "Fortaleza"
     },
     {
         "ID": "49",
-        "trecho": "São Paulo -> Natal",
+        "trecho": "S\u00e3o Paulo -> Natal",
         "assentos_disponiveis": 20,
-        "cidadeSaida": "São Paulo",
+        "cidadeSaida": "S\u00e3o Paulo",
         "cidadeChegada": "Natal"
     },
     {
         "ID": "50",
-        "trecho": "São Paulo -> Teresina",
+        "trecho": "S\u00e3o Paulo -> Teresina",
         "assentos_disponiveis": 20,
-        "cidadeSaida": "São Paulo",
+        "cidadeSaida": "S\u00e3o Paulo",
         "cidadeChegada": "Teresina"
     },
     {
         "ID": "51",
-        "trecho": "São Paulo -> Rio de Janeiro",
+        "trecho": "S\u00e3o Paulo -> Rio de Janeiro",
         "assentos_disponiveis": 20,
-        "cidadeSaida": "São Paulo",
+        "cidadeSaida": "S\u00e3o Paulo",
         "cidadeChegada": "Rio de Janeiro"
     },
     {
         "ID": "52",
-        "trecho": "São Paulo -> Belo Horizonte",
+        "trecho": "S\u00e3o Paulo -> Belo Horizonte",
         "assentos_disponiveis": 20,
-        "cidadeSaida": "São Paulo",
+        "cidadeSaida": "S\u00e3o Paulo",
         "cidadeChegada": "Belo Horizonte"
     },
     {
         "ID": "53",
-        "trecho": "São Paulo -> Curitiba",
+        "trecho": "S\u00e3o Paulo -> Curitiba",
         "assentos_disponiveis": 20,
-        "cidadeSaida": "São Paulo",
+        "cidadeSaida": "S\u00e3o Paulo",
         "cidadeChegada": "Curitiba"
     },
     {
         "ID": "54",
-        "trecho": "São Paulo -> Manaus",
+        "trecho": "S\u00e3o Paulo -> Manaus",
         "assentos_disponiveis": 20,
-        "cidadeSaida": "São Paulo",
+        "cidadeSaida": "S\u00e3o Paulo",
         "cidadeChegada": "Manaus"
     },
     {
@@ -414,10 +414,10 @@
     },
     {
         "ID": "60",
-        "trecho": "Rio de Janeiro -> São Paulo",
+        "trecho": "Rio de Janeiro -> S\u00e3o Paulo",
         "assentos_disponiveis": 20,
         "cidadeSaida": "Rio de Janeiro",
-        "cidadeChegada": "São Paulo"
+        "cidadeChegada": "S\u00e3o Paulo"
     },
     {
         "ID": "61",
@@ -477,10 +477,10 @@
     },
     {
         "ID": "69",
-        "trecho": "Belo Horizonte -> São Paulo",
+        "trecho": "Belo Horizonte -> S\u00e3o Paulo",
         "assentos_disponiveis": 20,
         "cidadeSaida": "Belo Horizonte",
-        "cidadeChegada": "São Paulo"
+        "cidadeChegada": "S\u00e3o Paulo"
     },
     {
         "ID": "70",
@@ -540,10 +540,10 @@
     },
     {
         "ID": "78",
-        "trecho": "Curitiba -> São Paulo",
+        "trecho": "Curitiba -> S\u00e3o Paulo",
         "assentos_disponiveis": 20,
         "cidadeSaida": "Curitiba",
-        "cidadeChegada": "São Paulo"
+        "cidadeChegada": "S\u00e3o Paulo"
     },
     {
         "ID": "79",
@@ -603,10 +603,10 @@
     },
     {
         "ID": "87",
-        "trecho": "Manaus -> São Paulo",
+        "trecho": "Manaus -> S\u00e3o Paulo",
         "assentos_disponiveis": 20,
         "cidadeSaida": "Manaus",
-        "cidadeChegada": "São Paulo"
+        "cidadeChegada": "S\u00e3o Paulo"
     },
     {
         "ID": "88",
@@ -618,14 +618,14 @@
     {
         "ID": "89",
         "trecho": "Manaus -> Belo Horizonte",
-        "assentos_disponiveis": 20,
+        "assentos_disponiveis": 19,
         "cidadeSaida": "Manaus",
         "cidadeChegada": "Belo Horizonte"
     },
     {
         "ID": "90",
         "trecho": "Manaus -> Curitiba",
-        "assentos_disponiveis": 20,
+        "assentos_disponiveis": 18,
         "cidadeSaida": "Manaus",
         "cidadeChegada": "Curitiba"
     }

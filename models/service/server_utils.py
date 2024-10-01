@@ -85,6 +85,7 @@ def contar_passagens(passagens):
         contador +=1
     return contador
 
+
 # Essa função executa a compra de uma passagem, detalhe que o processo de compra envolve mais do que só essa função, as etapas
 # desse processo são determinadas no cliente.
 def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuarios):
@@ -159,7 +160,6 @@ def comprar_passagem(userID, rotas_a_serem_compradas , rotas, passagens, usuario
                         r['assentos_disponiveis'] += 1
             atualizar_rotas(rotas)
         return rotas_sem_vagas                   
-
 
 # Função que busca as passagens de um dado usuário e retorna todas que não estejam marcadas como canceladas.
 def buscar_passagens_de_usuario(userID, usuarios):
@@ -256,33 +256,3 @@ def tratar_cliente(conexao_servidor, usuarios, passagens, rotas):
         print("Conexão encerrada.")
         conexao_servidor.close()
 
-# Essa função mantém o servidor ativo e conectado no endereço, ela também cria novas threads para conexões (até 8)
-# e carrega os BD que serão usados nas funções.
-def main():
-    IP_SERVIDOR = '0.0.0.0'
-    PORTA_SERVIDOR = 65432
-
-    servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    servidor.bind((IP_SERVIDOR, PORTA_SERVIDOR))
-    servidor.listen(8)
-    print(f"criado o socket\nIP: {IP_SERVIDOR}\nPorta: {PORTA_SERVIDOR}")
-
-    rotas = carregar_rotas()
-    print("carregado o BD de rotas")
-    usuarios = carregar_usuarios()
-    print("carregado o BD de usuarios")
-    passagens = carregar_passagens()
-    print("carregado o BD de passagens")
-
-    print(f"Servidor conectado em {IP_SERVIDOR} na porta {PORTA_SERVIDOR}...")
-
-    while True:
-        conexao_servidor, endereco_cliente = servidor.accept()
-        print(f"Nova conexão de {endereco_cliente}")
-        cliente_thread = threading.Thread(target=tratar_cliente, args=(conexao_servidor, usuarios, passagens, rotas))
-        cliente_thread.start()
-
-
-if __name__ == "__main__":
-    main()

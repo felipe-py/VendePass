@@ -152,6 +152,24 @@
                 "cliente_id": "1",
                 "rota": "Recife -> Fortaleza",
                 "estaCancelado": 1
+            },
+            {
+                "id_passagem": 56,
+                "cliente_id": "1",
+                "rota": "Manaus -> Curitiba",
+                "estaCancelado": 1
+            },
+            {
+                "id_passagem": 57,
+                "cliente_id": "1",
+                "rota": "Manaus -> Curitiba",
+                "estaCancelado": 1
+            },
+            {
+                "id_passagem": 58,
+                "cliente_id": "1",
+                "rota": "Manaus -> Belo Horizonte",
+                "estaCancelado": 1
             }
         ]
     },
