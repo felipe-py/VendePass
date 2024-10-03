@@ -170,6 +170,24 @@
                 "cliente_id": "1",
                 "rota": "Manaus -> Belo Horizonte",
                 "estaCancelado": 1
+            },
+            {
+                "id_passagem": 59,
+                "cliente_id": "1",
+                "rota": "Manaus -> Belo Horizonte",
+                "estaCancelado": false
+            },
+            {
+                "id_passagem": 60,
+                "cliente_id": "1",
+                "rota": "Rio de Janeiro -> Recife",
+                "estaCancelado": false
+            },
+            {
+                "id_passagem": 61,
+                "cliente_id": "1",
+                "rota": "Belo Horizonte -> Natal",
+                "estaCancelado": 1
             }
         ]
     },

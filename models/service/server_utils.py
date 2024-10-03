@@ -10,7 +10,10 @@ mutex = threading.Lock()
 
 # Definição de diretórios para facilitar outras funções.
 diretorio_do_servidor = Path(__file__).parent
-diretorio_dos_BD = diretorio_do_servidor.parent.parent / 'dados'
+diretorio_dos_BD   = diretorio_do_servidor.parent.parent / 'dados'
+diretorio_dos_BD_1 = diretorio_do_servidor.parent.parent / 'dados' / 'server1'
+diretorio_dos_BD_2 = diretorio_do_servidor.parent.parent / 'dados' / 'server2'
+diretorio_dos_BD_3 = diretorio_do_servidor.parent.parent / 'dados' / 'server3'
 
 # Função para fracionar respostas muito grandes em pedaços menores.
 def enviar_resposta(conexao_servidor, resposta):
@@ -40,12 +43,12 @@ def salvar_dados(arquivo, BD):
 
 # Funções específicas para carregar as rotas, passagens e usuarios. Elas rotornam seus respectivos Bancos de Dados(BD)
 def carregar_rotas():
-    diretorio_das_rotas = os.path.join(diretorio_dos_BD, 'rotas.json')
+    diretorio_das_rotas = os.path.join(diretorio_dos_BD_1, 'rotas_server_1.json')
     return carregar_dados(diretorio_das_rotas)
 
 
 def carregar_passagens():
-    diretorio_das_passagens = os.path.join(diretorio_dos_BD, 'passagens.json')
+    diretorio_das_passagens = os.path.join(diretorio_dos_BD_1, 'passagens_server_1.json')
     return carregar_dados(diretorio_das_passagens)
 
 
